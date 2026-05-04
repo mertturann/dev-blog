@@ -3,21 +3,73 @@ title: "About"
 slug: "about"
 ---
 
-# About
+# whoami
 
-Senior Software Engineer. I build distributed systems, think hard about developer experience, and occasionally ship side projects that live here.
+```bash
+$ cat /etc/mert/profile.json
+```
 
-<Callout type="info">
-  Open to interesting conversations. Find me on GitHub or send an email — links in the footer.
+```json
+{
+  "name": "Mert Turan",
+  "role": "Backend Developer",
+  "status": "online",
+  "uptime": "24/7 (coffee dependent)",
+  "stack": {
+    "primary":   ["C#", "ASP.NET Core"],
+    "secondary": ["PHP"],
+    "os":        "Linux (yes, I use arch — just kidding, Debian)",
+    "containers": "Docker",
+    "vcs":       "Git"
+  },
+  "interests": ["Backend Engineering", "Cyber Security", "Low-level stuff"],
+  "knownVulnerabilities": 0,
+  "openToBugs": false
+}
+```
+
+---
+
+## Stack Trace
+
+Gündüzleri **ASP.NET Core** ile API'ler yazıyorum. Geceleri bunları hacklenmeye karşı korumayı düşünüyorum — siber güvenlik hobim bu yüzden oldukça işlevsel.
+
+**PHP** konusunda da elim var; yani legacy kodu okurken donup kalmıyorum. Bu başlı başına bir beceri sayılır.
+
+**Linux** benim doğal habitatım. GUI olmadan rahat edebiliyorum; terminal benim IDE'm, `vim` ise terapi yöntemim.
+
+**Docker** sayesinde "bende çalışıyor" çağı kapandı — artık her yerde çalışıyor. **Git** ise her şeyin kayıt altında olduğunu bilmenin verdiği güvenle hatalı commit atma sanatı.
+
+---
+
+## Security Clearance
+
+<Callout type="warn" title="Disclaimer">
+  Siber güvenlik bilgisi yalnızca savunma amaçlıdır. Sistemlerinize izinsiz girmiyorum — girsem de logları temizlerdim zaten.
 </Callout>
 
-## What I work on
+Güvenlik tarafında teori ve pratik arasında sıkışıp kalmak yerine ikisini de bilen biri olmaya çalışıyorum. CTF çözmek, pentest metodolojileri ve "bu açık kapatılmalı" deyip PR açmak günlük rutinimin parçası.
 
-- Distributed systems and reliability engineering
-- Frontend performance and architecture
-- Developer tooling and build systems
-- Open source contributions
+---
 
-## This blog
+## `$ ps aux | grep mert`
 
-Built with Next.js 15, MDX, Velite, and a lot of care. Fully static — no server, no database, no trackers.
+<Terminal>
+{`mert     1337  0.0  0.1  writing-blog
+mert     4200  2.4  0.8  reading-docs
+mert     6660  0.0  0.0  questioning-life-choices
+mert     8080  1.2  0.4  building-something-new
+mert     9999 99.9 99.9  drinking-coffee`}
+</Terminal>
+
+---
+
+## Bağlantı
+
+Bir proje fikriniz, teknik bir sorunuz ya da sadece merhaba demek istiyorsanız — footer'daki linkleri kullanın. Pull request'lere de açığım.
+
+```sh
+$ curl -X POST https://abort.run/contact \
+  -d '{"intent": "hello"}' \
+  # veya sadece GitHub üzerinden yazın
+```
