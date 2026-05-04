@@ -1,5 +1,6 @@
 "use client";
 
+import { CommandPalette } from "@/components/command-palette/CommandPalette";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
@@ -11,7 +12,12 @@ const NAV = [
 	{ label: "About", href: "/about" },
 ];
 
-export function Header() {
+interface HeaderProps {
+	posts: Parameters<typeof CommandPalette>[0]["posts"];
+	tags: string[];
+}
+
+export function Header({ posts, tags }: HeaderProps) {
 	const [scrolled, setScrolled] = useState(false);
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const pathname = usePathname();
@@ -24,7 +30,6 @@ export function Header() {
 		return () => window.removeEventListener("scroll", onScroll);
 	}, []);
 
-	// Close mobile nav on route change
 	useEffect(() => setMobileOpen(false), [pathname]);
 
 	return (
@@ -41,7 +46,7 @@ export function Header() {
 			}}
 		>
 			<div className="mx-auto max-w-5xl px-4 sm:px-6 h-full flex items-center justify-between">
-				{/* Logo / wordmark */}
+				{/* Logo */}
 				<Link
 					href="/"
 					className="font-mono text-sm font-semibold tracking-tight transition-colors"
@@ -53,6 +58,9 @@ export function Header() {
 
 				{/* Desktop nav */}
 				<nav className="hidden sm:flex items-center gap-1">
+					{/* Search trigger — lives here so it's part of header flow */}
+					<CommandPalette posts={posts} tags={tags} />
+
 					{NAV.map(({ label, href }) => {
 						const active = pathname.startsWith(href);
 						return (
@@ -69,12 +77,12 @@ export function Header() {
 							</Link>
 						);
 					})}
-					<div className="ml-3 flex items-center gap-2">
+					<div className="ml-1 flex items-center">
 						<ThemeToggle />
 					</div>
 				</nav>
 
-				{/* Mobile hamburger */}
+				{/* Mobile */}
 				<div className="sm:hidden flex items-center gap-2">
 					<ThemeToggle />
 					<button
