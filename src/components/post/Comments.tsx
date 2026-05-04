@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 const GISCUS_REPO = process.env.NEXT_PUBLIC_GISCUS_REPO ?? "";
 const GISCUS_REPO_ID = process.env.NEXT_PUBLIC_GISCUS_REPO_ID ?? "";
-const GISCUS_CATEGORY = process.env.NEXT_PUBLIC_GISCUS_CATEGORY ?? "Blog Comments";
+const GISCUS_CATEGORY = process.env.NEXT_PUBLIC_GISCUS_CATEGORY ?? "General";
 const GISCUS_CATEGORY_ID = process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID ?? "";
 
 const isConfigured =
