@@ -41,8 +41,8 @@ export default async function PostPage({ params }: Props) {
 			<ReadingProgress />
 			<div className="mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-20">
 				<div className="lg:grid lg:grid-cols-[1fr_220px] lg:gap-12">
-					{/* Article */}
-					<article>
+					{/* Article — min-w-0 prevents grid child from overflowing its column */}
+					<article className="min-w-0">
 						<Link
 							href="/posts"
 							className="inline-flex items-center gap-1.5 text-xs font-mono mb-8 transition-colors"

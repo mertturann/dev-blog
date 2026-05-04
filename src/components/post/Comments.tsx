@@ -125,7 +125,8 @@ export function Comments() {
 							style={{ background: "var(--bg-surface-1)" }}
 						/>
 					)}
-					<div ref={containerRef} />
+					{/* max-w-full + overflow-hidden keeps the Giscus iframe inside the column */}
+					<div ref={containerRef} className="w-full max-w-full overflow-hidden" />
 				</>
 			)}
 		</section>

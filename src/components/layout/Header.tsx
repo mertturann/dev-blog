@@ -47,8 +47,8 @@ export function Header() {
 					className="font-mono text-sm font-semibold tracking-tight transition-colors"
 					style={{ color: "var(--fg-primary)" }}
 				>
-					<span style={{ color: "var(--accent-primary)" }}>~/</span>
-					<span>blog</span>
+					<span style={{ color: "var(--accent-primary)" }}>abort</span>
+					<span style={{ color: "var(--fg-muted)" }}>.run</span>
 				</Link>
 
 				{/* Desktop nav */}

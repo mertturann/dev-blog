@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import type { Post } from "./posts";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
-const SITE_NAME = "Dev Blog";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://abort.run";
+const SITE_NAME = "abort.run";
 const SITE_DESCRIPTION =
 	"A Senior Software Engineer writing about distributed systems, frontend engineering, and developer tools.";
-const TWITTER_HANDLE = "@yourtwitterhandle";
+const TWITTER_HANDLE = "@mertturann";
 
 export const defaultMetadata: Metadata = {
 	metadataBase: new URL(SITE_URL),
@@ -14,7 +14,7 @@ export const defaultMetadata: Metadata = {
 		template: `%s — ${SITE_NAME}`,
 	},
 	description: SITE_DESCRIPTION,
-	authors: [{ name: "Your Name", url: SITE_URL }],
+	authors: [{ name: "mertturann", url: SITE_URL }],
 	openGraph: {
 		type: "website",
 		siteName: SITE_NAME,

@@ -6,6 +6,8 @@
   font-size: var(--text-base);
   line-height: 1.8;
   max-width: var(--prose-width);
+  width: 100%;         /* fill the article column */
+  overflow-x: hidden;  /* catch any remaining child overflow */
 }
 
 /* --- Headings --- */
@@ -88,7 +90,8 @@
   padding: 0.15em 0.45em;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-subtle);
-  white-space: nowrap;
+  white-space: break-spaces; /* allow wrapping on narrow viewports */
+  word-break: break-word;
 }
 
 /* --- Horizontal rule --- */
@@ -100,7 +103,11 @@
 
 /* --- Tables --- */
 .prose table {
-  width: 100%;
+  display: block;        /* enable overflow-x on the element itself */
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: max-content;    /* shrink to fit on narrow viewports */
+  max-width: 100%;
   border-collapse: collapse;
   margin-bottom: 1.5em;
   font-size: var(--text-sm);
