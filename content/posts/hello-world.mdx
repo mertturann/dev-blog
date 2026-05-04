@@ -1,0 +1,41 @@
+---
+title: "Hello World — Building in Public"
+summary: "Why I built this blog, what I'll write about, and the engineering decisions behind this site."
+date: "2026-05-04"
+tags: ["meta", "engineering"]
+featured: true
+---
+
+Welcome. After years of accumulating drafts in Notion and threads in private Slack channels, I decided it was time to build a proper home for my writing.
+
+## Why another blog?
+
+Most developer blogs are either generated from a template in 10 minutes or over-engineered to the point where the author never actually writes anything. I wanted something in between — a place that feels *crafted*, but never gets in the way of the writing.
+
+<Callout type="info">
+  This blog is fully open source. Press **⌘ K** to open the command palette and search anything on the site.
+</Callout>
+
+## What I'll write about
+
+- **Systems design** — scalability decisions, distributed systems trade-offs, architecture reviews.
+- **Frontend engineering** — React, Next.js, performance, and the craft of building UIs.
+- **Engineering culture** — team structures, code reviews, on-call, and the invisible labour of software.
+- **Tools I build** — small utilities, scripts, and experiments.
+
+## The stack
+
+This site is built with:
+
+```ts title="next.config.ts"
+const nextConfig = {
+  output: "export",
+  images: { unoptimized: true },
+};
+```
+
+Everything is statically generated at build time. No database, no server, no cold starts. Just HTML on a CDN.
+
+---
+
+Thanks for reading. More soon.

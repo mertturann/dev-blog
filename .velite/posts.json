@@ -1,0 +1,98 @@
+[
+  {
+    "title": "Hello World — Building in Public",
+    "summary": "Why I built this blog, what I'll write about, and the engineering decisions behind this site.",
+    "date": "2026-05-04T00:00:00.000Z",
+    "tags": [
+      "meta",
+      "engineering"
+    ],
+    "draft": false,
+    "featured": true,
+    "slug": "hello-world",
+    "content": "const{Fragment:e,jsx:n,jsxs:t}=arguments[0];function _createMdxContent(r){const i={a:\"a\",code:\"code\",em:\"em\",h2:\"h2\",hr:\"hr\",li:\"li\",p:\"p\",pre:\"pre\",strong:\"strong\",ul:\"ul\",...r.components},{Callout:o}=i;return o||function(e,n){throw new Error(\"Expected \"+(n?\"component\":\"object\")+\" `\"+e+\"` to be defined: you likely forgot to import, pass, or provide it.\")}(\"Callout\",!0),t(e,{children:[n(i.p,{children:\"Welcome. After years of accumulating drafts in Notion and threads in private Slack channels, I decided it was time to build a proper home for my writing.\"}),\"\\n\",n(i.h2,{id:\"why-another-blog\",children:n(i.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#why-another-blog\",children:\"Why another blog?\"})}),\"\\n\",t(i.p,{children:[\"Most developer blogs are either generated from a template in 10 minutes or over-engineered to the point where the author never actually writes anything. I wanted something in between — a place that feels \",n(i.em,{children:\"crafted\"}),\", but never gets in the way of the writing.\"]}),\"\\n\",n(o,{type:\"info\",children:t(i.p,{children:[\"This blog is fully open source. Press \",n(i.strong,{children:\"⌘ K\"}),\" to open the command palette and search anything on the site.\"]})}),\"\\n\",n(i.h2,{id:\"what-ill-write-about\",children:n(i.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#what-ill-write-about\",children:\"What I’ll write about\"})}),\"\\n\",t(i.ul,{children:[\"\\n\",t(i.li,{children:[n(i.strong,{children:\"Systems design\"}),\" — scalability decisions, distributed systems trade-offs, architecture reviews.\"]}),\"\\n\",t(i.li,{children:[n(i.strong,{children:\"Frontend engineering\"}),\" — React, Next.js, performance, and the craft of building UIs.\"]}),\"\\n\",t(i.li,{children:[n(i.strong,{children:\"Engineering culture\"}),\" — team structures, code reviews, on-call, and the invisible labour of software.\"]}),\"\\n\",t(i.li,{children:[n(i.strong,{children:\"Tools I build\"}),\" — small utilities, scripts, and experiments.\"]}),\"\\n\"]}),\"\\n\",n(i.h2,{id:\"the-stack\",children:n(i.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#the-stack\",children:\"The stack\"})}),\"\\n\",n(i.p,{children:\"This site is built with:\"}),\"\\n\",n(i.pre,{children:n(i.code,{className:\"language-ts\",children:'const nextConfig = {\\n  output: \"export\",\\n  images: { unoptimized: true },\\n};\\n'})}),\"\\n\",n(i.p,{children:\"Everything is statically generated at build time. No database, no server, no cold starts. Just HTML on a CDN.\"}),\"\\n\",n(i.hr,{}),\"\\n\",n(i.p,{children:\"Thanks for reading. More soon.\"})]})}return{default:function(e={}){const{wrapper:t}=e.components||{};return t?n(t,{...e,children:n(_createMdxContent,{...e})}):_createMdxContent(e)}};",
+    "toc": [
+      {
+        "title": "Why another blog?",
+        "url": "#why-another-blog",
+        "items": []
+      },
+      {
+        "title": "What I'll write about",
+        "url": "#what-ill-write-about",
+        "items": []
+      },
+      {
+        "title": "The stack",
+        "url": "#the-stack",
+        "items": []
+      }
+    ],
+    "permalink": "/posts/hello-world"
+  },
+  {
+    "title": "Why I Rewrote Our Build System (And What I Learned)",
+    "summary": "A deep-dive into migrating a 300k-line monorepo from a bespoke Makefile + Bash pipeline to Turborepo, the trade-offs we made, and the lessons that surprised us.",
+    "date": "2026-04-18T00:00:00.000Z",
+    "updated": "2026-05-01T00:00:00.000Z",
+    "tags": [
+      "build-systems",
+      "monorepo",
+      "turborepo",
+      "dx"
+    ],
+    "draft": false,
+    "featured": true,
+    "slug": "why-i-rewrote-our-build-system",
+    "content": "const{Fragment:e,jsx:n,jsxs:r}=arguments[0];function _createMdxContent(i){const t={a:\"a\",code:\"code\",h2:\"h2\",h3:\"h3\",li:\"li\",p:\"p\",pre:\"pre\",strong:\"strong\",table:\"table\",tbody:\"tbody\",td:\"td\",th:\"th\",thead:\"thead\",tr:\"tr\",ul:\"ul\",...i.components},{Callout:a,FileTree:l,Steps:c,Terminal:o}=t;return a||_missingMdxReference(\"Callout\",!0),l||_missingMdxReference(\"FileTree\",!0),c||_missingMdxReference(\"Steps\",!0),o||_missingMdxReference(\"Terminal\",!0),r(e,{children:[n(t.p,{children:\"Our build system was six years old. It worked — in the same way a 1998 Honda Civic with 300,000 miles “works”. You could get from A to B, but every journey carried existential dread.\"}),\"\\n\",n(t.h2,{id:\"the-legacy-system\",children:n(t.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#the-legacy-system\",children:\"The legacy system\"})}),\"\\n\",n(t.p,{children:\"Here’s what we were dealing with:\"}),\"\\n\",n(l,{children:\".\\n├── Makefile          # 2,400 lines, 0 comments\\n├── scripts/\\n│   ├── build.sh      # Called from Make, calls Python, calls Node\\n│   ├── test.sh       # 14 environment variables, 3 undocumented\\n│   └── deploy.sh     # Everyone is afraid of this file\\n└── ci/\\n  └── pipeline.yml  # 8 minutes on a warm cache, 23 minutes cold\"}),\"\\n\",n(a,{type:\"warn\",children:r(t.p,{children:[\"Before migrating any build system in production, make sure you have at least \",n(t.strong,{children:\"one week\"}),\" of baseline metrics: build times, cache hit rates, failure rates. You cannot prove improvement without a baseline.\"]})}),\"\\n\",n(t.h2,{id:\"why-turborepo\",children:n(t.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#why-turborepo\",children:\"Why Turborepo\"})}),\"\\n\",n(t.p,{children:\"I evaluated three options:\"}),\"\\n\",r(t.table,{children:[n(t.thead,{children:r(t.tr,{children:[n(t.th,{children:\"Tool\"}),n(t.th,{children:\"Remote cache\"}),n(t.th,{children:\"Incremental\"}),n(t.th,{children:\"Learning curve\"})]})}),r(t.tbody,{children:[r(t.tr,{children:[n(t.td,{children:\"Turborepo\"}),n(t.td,{children:\"✅ native\"}),n(t.td,{children:\"✅ task-level\"}),n(t.td,{children:\"Low\"})]}),r(t.tr,{children:[n(t.td,{children:\"Nx\"}),n(t.td,{children:\"✅\"}),n(t.td,{children:\"✅ project-level\"}),n(t.td,{children:\"Medium\"})]}),r(t.tr,{children:[n(t.td,{children:\"Bazel\"}),n(t.td,{children:\"✅\"}),n(t.td,{children:\"✅ file-level\"}),n(t.td,{children:\"Extreme\"})]})]})]}),\"\\n\",n(t.p,{children:\"For a team of 12 engineers who needed to be productive from day one, Turborepo was the obvious choice.\"}),\"\\n\",n(t.h2,{id:\"the-migration\",children:n(t.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#the-migration\",children:\"The migration\"})}),\"\\n\",r(c,{children:[n(t.h3,{id:\"audit-your-task-graph\",children:n(t.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#audit-your-task-graph\",children:\"Audit your task graph\"})}),n(t.p,{children:\"Before writing a single line of config, map your build graph manually. I used a whiteboard and coloured markers.\"}),n(t.h3,{id:\"set-up-the-workspace\",children:n(t.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#set-up-the-workspace\",children:\"Set up the workspace\"})}),n(t.pre,{children:n(t.code,{className:\"language-json\",children:'{\\n  \"$schema\": \"https://turbo.build/schema.json\",\\n  \"tasks\": {\\n    \"build\": {\\n      \"dependsOn\": [\"^build\"],\\n      \"outputs\": [\"dist/**\", \".next/**\"]\\n    }\\n  }\\n}\\n'})}),n(t.h3,{id:\"migrate-scripts-incrementally\",children:n(t.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#migrate-scripts-incrementally\",children:\"Migrate scripts incrementally\"})}),n(t.p,{children:\"Never do a big-bang migration. Wrap each old script in a Turbo task one at a time, verify behaviour matches, merge.\"}),n(t.h3,{id:\"enable-remote-caching\",children:n(t.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#enable-remote-caching\",children:\"Enable remote caching\"})}),n(t.p,{children:\"This is where the real wins appear. Our CI went from 23 minutes to 4 minutes on cache hits.\"})]}),\"\\n\",n(t.h2,{id:\"results\",children:n(t.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#results\",children:\"Results\"})}),\"\\n\",n(o,{children:'$ turbo build --filter=\"[HEAD^1]\"\\n• Packages in scope: 3\\n• Running build in 3 packages\\n• Remote cache hit: 47 tasks\\n• Local computation: 3 tasks\\n✓ Done in 41s'}),\"\\n\",n(t.p,{children:\"The numbers:\"}),\"\\n\",r(t.ul,{children:[\"\\n\",r(t.li,{children:[n(t.strong,{children:\"Mean CI time:\"}),\" 23 min → 4 min (83% reduction)\"]}),\"\\n\",r(t.li,{children:[n(t.strong,{children:\"Cache hit rate (month 3):\"}),\" 84%\"]}),\"\\n\"]}),\"\\n\",n(t.h2,{id:\"what-surprised-me\",children:n(t.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#what-surprised-me\",children:\"What surprised me\"})}),\"\\n\",r(t.p,{children:[\"The biggest surprise was not the time savings. It was the \",n(t.strong,{children:\"psychological effect\"}),\" on the team. When builds are fast, engineers run them more often. When engineers run them more often, they catch bugs earlier. The feedback loop compounds.\"]}),\"\\n\",n(t.p,{children:\"Fast builds are a culture investment, not just a tooling investment.\"})]})}return{default:function(e={}){const{wrapper:r}=e.components||{};return r?n(r,{...e,children:n(_createMdxContent,{...e})}):_createMdxContent(e)}};function _missingMdxReference(e,n){throw new Error(\"Expected \"+(n?\"component\":\"object\")+\" `\"+e+\"` to be defined: you likely forgot to import, pass, or provide it.\")}",
+    "toc": [
+      {
+        "title": "The legacy system",
+        "url": "#the-legacy-system",
+        "items": []
+      },
+      {
+        "title": "Why Turborepo",
+        "url": "#why-turborepo",
+        "items": []
+      },
+      {
+        "title": "The migration",
+        "url": "#the-migration",
+        "items": [
+          {
+            "title": "Audit your task graph",
+            "url": "#audit-your-task-graph",
+            "items": []
+          },
+          {
+            "title": "Set up the workspace",
+            "url": "#set-up-the-workspace",
+            "items": []
+          },
+          {
+            "title": "Migrate scripts incrementally",
+            "url": "#migrate-scripts-incrementally",
+            "items": []
+          },
+          {
+            "title": "Enable remote caching",
+            "url": "#enable-remote-caching",
+            "items": []
+          }
+        ]
+      },
+      {
+        "title": "Results",
+        "url": "#results",
+        "items": []
+      },
+      {
+        "title": "What surprised me",
+        "url": "#what-surprised-me",
+        "items": []
+      }
+    ],
+    "permalink": "/posts/why-i-rewrote-our-build-system"
+  }
+]

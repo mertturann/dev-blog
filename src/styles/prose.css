@@ -1,0 +1,151 @@
+/* Article typography — applied via .prose class on article body */
+
+.prose {
+  color: var(--fg-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.8;
+  max-width: var(--prose-width);
+}
+
+/* --- Headings --- */
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  color: var(--fg-primary);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  margin-top: 2.5em;
+  margin-bottom: 0.75em;
+  scroll-margin-top: calc(var(--header-height) + 1.5rem);
+}
+
+.prose h1 { font-size: var(--text-3xl); }
+.prose h2 { font-size: var(--text-2xl); border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.3em; }
+.prose h3 { font-size: var(--text-xl); }
+.prose h4 { font-size: var(--text-lg); }
+
+/* Anchor links on headings */
+.prose h2 a,
+.prose h3 a,
+.prose h4 a {
+  color: inherit;
+  text-decoration: none;
+}
+.prose h2 a:hover,
+.prose h3 a:hover {
+  color: var(--accent-primary);
+}
+
+/* --- Body text --- */
+.prose p {
+  margin-top: 0;
+  margin-bottom: 1.5em;
+}
+
+.prose a {
+  color: var(--accent-primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color var(--duration-micro) var(--ease-out-expo);
+}
+.prose a:hover {
+  color: var(--accent-glow);
+}
+
+/* --- Lists --- */
+.prose ul,
+.prose ol {
+  padding-left: 1.625em;
+  margin-bottom: 1.5em;
+}
+.prose li { margin-bottom: 0.4em; }
+.prose ul > li { list-style-type: disc; }
+.prose ul > li::marker { color: var(--accent-primary); }
+.prose ol > li::marker { color: var(--fg-muted); font-family: var(--font-mono); font-size: var(--text-sm); }
+
+/* --- Blockquote --- */
+.prose blockquote {
+  border-left: 3px solid var(--accent-primary);
+  margin-left: 0;
+  padding: 0.75em 1.25em;
+  background: var(--bg-surface-1);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  color: var(--fg-secondary);
+  font-style: italic;
+  margin-bottom: 1.5em;
+}
+
+/* --- Inline code --- */
+.prose :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: var(--bg-surface-2);
+  color: var(--accent-sky);
+  padding: 0.15em 0.45em;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+
+/* --- Horizontal rule --- */
+.prose hr {
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  margin: 3em 0;
+}
+
+/* --- Tables --- */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5em;
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+}
+.prose th {
+  background: var(--bg-surface-2);
+  color: var(--fg-secondary);
+  font-weight: 600;
+  text-align: left;
+  padding: 0.5em 0.75em;
+  border: 1px solid var(--border-subtle);
+}
+.prose td {
+  padding: 0.5em 0.75em;
+  border: 1px solid var(--border-subtle);
+  vertical-align: top;
+}
+.prose tr:nth-child(even) td {
+  background: var(--bg-surface-0);
+}
+
+/* --- Images --- */
+.prose img {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  max-width: 100%;
+  height: auto;
+}
+
+/* --- Strong / em --- */
+.prose strong { color: var(--fg-primary); font-weight: 600; }
+.prose em { color: var(--fg-secondary); }
+
+/* --- Sidenotes (wide viewports only) --- */
+@media (min-width: 1280px) {
+  .prose .sidenote {
+    position: absolute;
+    right: -18rem;
+    width: 16rem;
+    font-size: var(--text-sm);
+    color: var(--fg-muted);
+    font-family: var(--font-mono);
+    border-left: 2px solid var(--border-subtle);
+    padding-left: 0.75rem;
+    line-height: 1.5;
+  }
+}
