@@ -10,76 +10,82 @@ export default function HomePage() {
 		.slice(0, 4);
 
 	return (
-		<div className="mx-auto max-w-5xl px-4 sm:px-6 py-16 sm:py-24">
-			{/* Hero */}
-			<section className="mb-20">
+		<div className="mx-auto max-w-5xl px-4 sm:px-6">
+			{/* Hero — full-bleed ambient section */}
+			<section className="relative py-20 sm:py-28 mb-16">
+				{/* Dot grid + radial glow */}
 				<div
-					className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono mb-6"
-					style={{
-						background: "rgba(124,92,255,0.1)",
-						border: "1px solid rgba(124,92,255,0.25)",
-						color: "var(--accent-primary)",
-					}}
-				>
-					<span
-						className="w-1.5 h-1.5 rounded-full animate-pulse"
-						style={{ background: "var(--accent-emerald)" }}
-					/>
-					writing about systems &amp; craft
-				</div>
+					aria-hidden
+					className="dot-grid hero-glow pointer-events-none absolute inset-x-[-2rem] top-0 bottom-0"
+					style={{ maskImage: "linear-gradient(to bottom, transparent 0%, black 20%, black 70%, transparent 100%)" }}
+				/>
 
-				<h1
-					className="text-4xl sm:text-5xl font-bold tracking-tight mb-4"
-					style={{ color: "var(--fg-primary)", letterSpacing: "-0.04em", lineHeight: 1.1 }}
-				>
-					Senior Software{" "}
-					<span
+				<div className="relative">
+					{/* Status pill */}
+					<div
+						className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono mb-7"
 						style={{
-							background: "linear-gradient(135deg, var(--accent-primary), var(--accent-glow))",
-							WebkitBackgroundClip: "text",
-							WebkitTextFillColor: "transparent",
+							background: "rgba(124,92,255,0.08)",
+							border: "1px solid rgba(124,92,255,0.2)",
+							color: "var(--accent-primary)",
 						}}
 					>
-						Engineer
-					</span>
-				</h1>
+						<span
+							className="w-1.5 h-1.5 rounded-full animate-pulse"
+							style={{ background: "var(--accent-emerald)" }}
+						/>
+						writing about systems &amp; craft
+					</div>
 
-				<p className="text-lg max-w-2xl mb-8" style={{ color: "var(--fg-secondary)", lineHeight: 1.7 }}>
-					I write about distributed systems, frontend performance, developer
-					tooling, and the craft of building software that scales and delights.
-				</p>
+					<h1
+						className="text-4xl sm:text-[3.25rem] font-bold mb-5 leading-[1.1] tracking-tight"
+						style={{ color: "var(--fg-primary)", letterSpacing: "-0.04em" }}
+					>
+						Mert Turan
+						<br />
+						<span
+							style={{
+								background: "linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-glow) 50%, var(--accent-sky) 100%)",
+								WebkitBackgroundClip: "text",
+								WebkitTextFillColor: "transparent",
+							}}
+						>
+							Backend Developer
+						</span>
+					</h1>
 
-				<div className="flex flex-wrap gap-3">
-					<Link
-						href="/posts"
-						className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150"
-						style={{ background: "var(--accent-primary)", color: "#fff" }}
+					<p
+						className="text-base sm:text-lg max-w-xl mb-8 leading-relaxed"
+						style={{ color: "var(--fg-secondary)" }}
 					>
-						All posts <ArrowRight size={14} />
-					</Link>
-					<Link
-						href="/about"
-						className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150"
-						style={{
-							background: "var(--bg-surface-1)",
-							border: "1px solid var(--border-subtle)",
-							color: "var(--fg-secondary)",
-						}}
-					>
-						About me
-					</Link>
+						C# · ASP.NET Core · PHP · Linux · Docker · Cyber Security.
+						<br />
+						Burada sistemler, araçlar ve yazılım mühendisliği üzerine yazıyorum.
+					</p>
+
+					<div className="flex flex-wrap gap-3">
+						<Link href="/posts" className="btn-primary">
+							Yazıları Oku <ArrowRight size={14} />
+						</Link>
+						<Link href="/about" className="btn-ghost">
+							Hakkımda
+						</Link>
+					</div>
 				</div>
 			</section>
 
 			{/* Featured */}
 			{featured.length > 0 && (
 				<section className="mb-16">
-					<h2
-						className="text-xs font-mono font-semibold uppercase tracking-widest mb-6"
-						style={{ color: "var(--fg-muted)" }}
-					>
-						Featured
-					</h2>
+					<div className="flex items-center gap-3 mb-6">
+						<span
+							className="text-[0.65rem] font-mono font-semibold uppercase tracking-widest"
+							style={{ color: "var(--fg-muted)" }}
+						>
+							Öne Çıkan
+						</span>
+						<div className="flex-1 h-px" style={{ background: "var(--border-subtle)" }} />
+					</div>
 					<div className="grid sm:grid-cols-2 gap-4">
 						{featured.map((post) => (
 							<PostCard key={post.slug} post={post} />
@@ -90,20 +96,21 @@ export default function HomePage() {
 
 			{/* Recent */}
 			{recent.length > 0 && (
-				<section>
-					<div className="flex items-center justify-between mb-6">
-						<h2
-							className="text-xs font-mono font-semibold uppercase tracking-widest"
+				<section className="mb-16">
+					<div className="flex items-center gap-3 mb-6">
+						<span
+							className="text-[0.65rem] font-mono font-semibold uppercase tracking-widest"
 							style={{ color: "var(--fg-muted)" }}
 						>
-							Recent
-						</h2>
+							Son Yazılar
+						</span>
+						<div className="flex-1 h-px" style={{ background: "var(--border-subtle)" }} />
 						<Link
 							href="/posts"
 							className="text-xs font-mono flex items-center gap-1 transition-colors"
 							style={{ color: "var(--accent-primary)" }}
 						>
-							View all <ArrowRight size={11} />
+							Tümü <ArrowRight size={11} />
 						</Link>
 					</div>
 					<div className="grid sm:grid-cols-2 gap-4">

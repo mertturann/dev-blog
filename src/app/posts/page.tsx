@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export const metadata = {
 	title: "Posts",
-	description: "All posts",
+	description: "Tüm yazılar",
 };
 
 export default function PostsPage() {
@@ -12,27 +12,30 @@ export default function PostsPage() {
 	const tags = getAllTags();
 
 	return (
-		<div className="mx-auto max-w-5xl px-4 sm:px-6 py-16">
-			<div className="mb-12">
+		<div className="mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-16">
+			<div className="mb-10">
 				<h1
-					className="text-3xl font-bold tracking-tight mb-3"
+					className="text-2xl sm:text-3xl font-bold tracking-tight mb-2"
 					style={{ color: "var(--fg-primary)", letterSpacing: "-0.03em" }}
 				>
 					Posts
 				</h1>
-				<p className="text-sm font-mono" style={{ color: "var(--fg-muted)" }}>
-					{posts.length} article{posts.length !== 1 ? "s" : ""}
+				<p className="text-xs font-mono" style={{ color: "var(--fg-muted)" }}>
+					{posts.length} yazı · son güncelleme{" "}
+					{new Date(posts[0]?.date ?? Date.now()).toLocaleDateString("tr-TR", {
+						month: "long",
+						year: "numeric",
+					})}
 				</p>
 			</div>
 
-			{/* Tag filter */}
 			{tags.length > 0 && (
 				<div className="flex flex-wrap gap-2 mb-10">
 					{tags.map((tag) => (
 						<Link
 							key={tag}
 							href={`/tags/${tag}`}
-							className="px-3 py-1 text-xs font-mono rounded-full transition-all"
+							className="tag-pill px-2.5 py-1 text-xs font-mono rounded-full transition-all duration-150"
 							style={{
 								background: "var(--bg-surface-1)",
 								border: "1px solid var(--border-subtle)",

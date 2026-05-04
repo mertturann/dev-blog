@@ -13,7 +13,7 @@ export default function AboutPage() {
 	if (!page) notFound();
 
 	return (
-		<div className="mx-auto max-w-5xl px-4 sm:px-6 py-16 sm:py-24">
+		<div className="mx-auto max-w-5xl px-4 sm:px-6 py-8 sm:py-12">
 			<div className="max-w-2xl">
 				<div className="prose">
 					<MDXContent code={page.content} />

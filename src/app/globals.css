@@ -39,7 +39,6 @@
 html {
   color-scheme: dark;
   scroll-behavior: smooth;
-  /* Prevent FOUC: canonical dark bg before any paint */
   background-color: var(--bg-canvas);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -57,7 +56,7 @@ body {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  overflow-x: clip; /* prevent any child from causing horizontal page scroll */
+  overflow-x: clip;
 }
 
 /* --- Selection --- */
@@ -78,3 +77,89 @@ body {
 ::-webkit-scrollbar-track { background: var(--bg-surface-0); }
 ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: var(--radius-full); }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
+
+/* --- Dot grid background (used on hero) --- */
+.dot-grid {
+  background-image: radial-gradient(circle, var(--border-subtle) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* --- Ambient hero glow --- */
+.hero-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 0%, rgb(124 92 255 / 0.12), transparent 70%);
+  pointer-events: none;
+}
+
+/* --- Glow card hover border animation --- */
+.glow-card {
+  transition:
+    border-color 200ms var(--ease-out-expo),
+    box-shadow 200ms var(--ease-out-expo);
+}
+.glow-card:hover {
+  border-color: var(--border-strong) !important;
+  box-shadow: 0 0 0 1px rgb(124 92 255 / 0.15), 0 8px 32px rgb(0 0 0 / 0.35);
+}
+
+/* --- Footer icon hover --- */
+.footer-icon-link:hover {
+  color: var(--fg-primary) !important;
+  border-color: var(--border-strong) !important;
+  background: var(--bg-surface-1);
+}
+
+/* --- Tag pill hover --- */
+.tag-pill:hover {
+  border-color: rgba(124, 92, 255, 0.4) !important;
+  color: var(--accent-primary) !important;
+  background: rgba(124, 92, 255, 0.06) !important;
+}
+
+/* --- Primary button --- */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-lg);
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: var(--accent-primary);
+  color: #fff;
+  transition:
+    background 150ms var(--ease-out-expo),
+    box-shadow 150ms var(--ease-out-expo),
+    transform 150ms var(--ease-out-expo);
+}
+.btn-primary:hover {
+  background: var(--accent-glow);
+  box-shadow: 0 0 20px rgb(124 92 255 / 0.4);
+  transform: translateY(-1px);
+}
+.btn-primary:active { transform: translateY(0); }
+
+/* --- Ghost button --- */
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-lg);
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: var(--bg-surface-1);
+  color: var(--fg-secondary);
+  border: 1px solid var(--border-subtle);
+  transition:
+    background 150ms var(--ease-out-expo),
+    border-color 150ms var(--ease-out-expo),
+    color 150ms var(--ease-out-expo);
+}
+.btn-ghost:hover {
+  background: var(--bg-surface-2);
+  border-color: var(--border-strong);
+  color: var(--fg-primary);
+}

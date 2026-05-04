@@ -1,5 +1,6 @@
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { getAllPosts, getAllTags } from "@/lib/posts";
 import { defaultMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
@@ -51,6 +52,7 @@ export default function RootLayout({
 					<Header posts={posts} tags={tags} />
 					<main className="flex-1 pt-[var(--header-height)]">{children}</main>
 					<Footer />
+					<ScrollToTop />
 				</ThemeProvider>
 			</body>
 		</html>
