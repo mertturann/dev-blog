@@ -38,6 +38,7 @@
     "shiki": "^4.0.2",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "unist-util-visit": "^5.1.0"
+    "unist-util-visit": "^5.1.0",
+    "wrangler": "^4.88.0"
   }
 }
