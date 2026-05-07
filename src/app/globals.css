@@ -141,6 +141,29 @@ body {
 }
 .btn-primary:active { transform: translateY(0); }
 
+/* --- Page enter animation --- */
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-enter {
+  animation: page-enter 0.4s var(--ease-out-expo) both;
+}
+
+/* --- Post nav card hover --- */
+.post-nav-card {
+  transition:
+    border-color 180ms var(--ease-out-expo),
+    background   180ms var(--ease-out-expo);
+}
+.post-nav-card:hover {
+  border-color: var(--border-strong) !important;
+  background: var(--bg-surface-2) !important;
+}
+.post-nav-card:hover .post-nav-title {
+  color: var(--accent-glow);
+}
+
 /* --- Ghost button --- */
 .btn-ghost {
   display: inline-flex;

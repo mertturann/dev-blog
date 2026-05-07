@@ -1,6 +1,6 @@
 "use client";
 
-import { useTheme } from "next-themes";
+import { useTheme } from "@/lib/theme";
 import { useEffect, useRef, useState } from "react";
 
 const GISCUS_REPO = process.env.NEXT_PUBLIC_GISCUS_REPO ?? "";
@@ -14,7 +14,7 @@ const isConfigured =
 export function Comments() {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [loaded, setLoaded] = useState(false);
-	const { resolvedTheme } = useTheme();
+	const { theme: resolvedTheme } = useTheme();
 
 	useEffect(() => {
 		if (!isConfigured) return;

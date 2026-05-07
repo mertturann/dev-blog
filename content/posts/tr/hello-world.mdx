@@ -1,0 +1,41 @@
+---
+title: "Merhaba Dünya — Kamuya Açık Geliştirme"
+summary: "Bu blogu neden kurdum, ne hakkında yazacağım ve bu sitenin ardındaki teknik kararlar."
+date: "2026-05-04"
+tags: ["meta", "mühendislik"]
+featured: true
+---
+
+Hoş geldiniz. Yıllarca Notion'da taslak biriktirip özel Slack kanallarında thread'ler açtıktan sonra, yazılarım için gerçek bir ev kurma vaktinin geldiğine karar verdim.
+
+## Neden bir blog daha?
+
+Çoğu geliştirici blogu ya 10 dakikada şablondan üretilmiş ya da yazarın hiçbir şey yazmadığı aşırı karmaşık yapılardır. Ben ikisi arasında bir şey istedim — *özenle yapılmış* hissettiren ama yazmanın önünde hiçbir zaman engel olmayan bir yer.
+
+<Callout type="info">
+  Bu blog tamamen açık kaynaklıdır. **⌘ K** tuşuna basarak komut paletini açabilir ve sitede her şeyi arayabilirsiniz.
+</Callout>
+
+## Ne hakkında yazacağım
+
+- **Sistem tasarımı** — ölçeklenebilirlik kararları, dağıtık sistemler trade-off'ları, mimari incelemeler.
+- **Frontend mühendisliği** — React, Next.js, performans ve arayüz oluşturma sanatı.
+- **Mühendislik kültürü** — ekip yapıları, kod incelemeleri, on-call ve yazılımın görünmez emeği.
+- **Geliştirdiğim araçlar** — küçük yardımcı programlar, betikler ve denemeler.
+
+## Stack
+
+Bu site şunlarla geliştirildi:
+
+```ts title="next.config.ts"
+const nextConfig = {
+  output: "export",
+  images: { unoptimized: true },
+};
+```
+
+Her şey derleme sırasında statik olarak üretiliyor. Veritabanı yok, sunucu yok, soğuk başlatma yok. Sadece CDN'deki HTML.
+
+---
+
+Okuduğun için teşekkürler. Yakında daha fazlası.

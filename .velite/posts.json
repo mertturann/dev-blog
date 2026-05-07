@@ -28,7 +28,8 @@
         "items": []
       }
     ],
-    "permalink": "/posts/hello-world"
+    "locale": "en",
+    "permalink": "/en/posts/hello-world"
   },
   {
     "title": "Why I Rewrote Our Build System (And What I Learned)",
@@ -93,6 +94,105 @@
         "items": []
       }
     ],
-    "permalink": "/posts/why-i-rewrote-our-build-system"
+    "locale": "en",
+    "permalink": "/en/posts/why-i-rewrote-our-build-system"
+  },
+  {
+    "title": "Merhaba Dünya — Kamuya Açık Geliştirme",
+    "summary": "Bu blogu neden kurdum, ne hakkında yazacağım ve bu sitenin ardındaki teknik kararlar.",
+    "date": "2026-05-04T00:00:00.000Z",
+    "tags": [
+      "meta",
+      "mühendislik"
+    ],
+    "draft": false,
+    "featured": true,
+    "slug": "hello-world",
+    "content": "const{Fragment:e,jsx:n,jsxs:a}=arguments[0];function _createMdxContent(r){const l={a:\"a\",code:\"code\",em:\"em\",h2:\"h2\",hr:\"hr\",li:\"li\",p:\"p\",pre:\"pre\",span:\"span\",strong:\"strong\",ul:\"ul\",...r.components},{Callout:i}=l;return i||function(e,n){throw new Error(\"Expected \"+(n?\"component\":\"object\")+\" `\"+e+\"` to be defined: you likely forgot to import, pass, or provide it.\")}(\"Callout\",!0),a(e,{children:[n(l.p,{children:\"Hoş geldiniz. Yıllarca Notion’da taslak biriktirip özel Slack kanallarında thread’ler açtıktan sonra, yazılarım için gerçek bir ev kurma vaktinin geldiğine karar verdim.\"}),\"\\n\",n(l.h2,{id:\"neden-bir-blog-daha\",children:n(l.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#neden-bir-blog-daha\",children:\"Neden bir blog daha?\"})}),\"\\n\",a(l.p,{children:[\"Çoğu geliştirici blogu ya 10 dakikada şablondan üretilmiş ya da yazarın hiçbir şey yazmadığı aşırı karmaşık yapılardır. Ben ikisi arasında bir şey istedim — \",n(l.em,{children:\"özenle yapılmış\"}),\" hissettiren ama yazmanın önünde hiçbir zaman engel olmayan bir yer.\"]}),\"\\n\",n(i,{type:\"info\",children:a(l.p,{children:[\"Bu blog tamamen açık kaynaklıdır. \",n(l.strong,{children:\"⌘ K\"}),\" tuşuna basarak komut paletini açabilir ve sitede her şeyi arayabilirsiniz.\"]})}),\"\\n\",n(l.h2,{id:\"ne-hakkında-yazacağım\",children:n(l.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#ne-hakkında-yazacağım\",children:\"Ne hakkında yazacağım\"})}),\"\\n\",a(l.ul,{children:[\"\\n\",a(l.li,{children:[n(l.strong,{children:\"Sistem tasarımı\"}),\" — ölçeklenebilirlik kararları, dağıtık sistemler trade-off’ları, mimari incelemeler.\"]}),\"\\n\",a(l.li,{children:[n(l.strong,{children:\"Frontend mühendisliği\"}),\" — React, Next.js, performans ve arayüz oluşturma sanatı.\"]}),\"\\n\",a(l.li,{children:[n(l.strong,{children:\"Mühendislik kültürü\"}),\" — ekip yapıları, kod incelemeleri, on-call ve yazılımın görünmez emeği.\"]}),\"\\n\",a(l.li,{children:[n(l.strong,{children:\"Geliştirdiğim araçlar\"}),\" — küçük yardımcı programlar, betikler ve denemeler.\"]}),\"\\n\"]}),\"\\n\",n(l.h2,{id:\"stack\",children:n(l.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#stack\",children:\"Stack\"})}),\"\\n\",n(l.p,{children:\"Bu site şunlarla geliştirildi:\"}),\"\\n\",n(e,{children:n(l.pre,{className:\"shiki tokyo-night\",style:{backgroundColor:\"#1a1b26\",color:\"#a9b1d6\"},tabIndex:\"0\",\"data-metastring\":'title=\"next.config.ts\"',children:a(l.code,{children:[a(l.span,{className:\"line\",children:[n(l.span,{style:{color:\"#9D7CD8\",fontStyle:\"italic\"},children:\"const\"}),n(l.span,{style:{color:\"#BB9AF7\"},children:\" nextConfig\"}),n(l.span,{style:{color:\"#89DDFF\"},children:\" =\"}),n(l.span,{style:{color:\"#9ABDF5\"},children:\" {\"})]}),\"\\n\",a(l.span,{className:\"line\",children:[n(l.span,{style:{color:\"#73DACA\"},children:\"  output\"}),n(l.span,{style:{color:\"#89DDFF\"},children:\":\"}),n(l.span,{style:{color:\"#89DDFF\"},children:' \"'}),n(l.span,{style:{color:\"#9ECE6A\"},children:\"export\"}),n(l.span,{style:{color:\"#89DDFF\"},children:'\"'}),n(l.span,{style:{color:\"#89DDFF\"},children:\",\"})]}),\"\\n\",a(l.span,{className:\"line\",children:[n(l.span,{style:{color:\"#73DACA\"},children:\"  images\"}),n(l.span,{style:{color:\"#89DDFF\"},children:\":\"}),n(l.span,{style:{color:\"#9ABDF5\"},children:\" {\"}),n(l.span,{style:{color:\"#73DACA\"},children:\" unoptimized\"}),n(l.span,{style:{color:\"#89DDFF\"},children:\":\"}),n(l.span,{style:{color:\"#FF9E64\"},children:\" true\"}),n(l.span,{style:{color:\"#9ABDF5\"},children:\" }\"}),n(l.span,{style:{color:\"#89DDFF\"},children:\",\"})]}),\"\\n\",a(l.span,{className:\"line\",children:[n(l.span,{style:{color:\"#9ABDF5\"},children:\"}\"}),n(l.span,{style:{color:\"#89DDFF\"},children:\";\"})]})]})})}),\"\\n\",n(l.p,{children:\"Her şey derleme sırasında statik olarak üretiliyor. Veritabanı yok, sunucu yok, soğuk başlatma yok. Sadece CDN’deki HTML.\"}),\"\\n\",n(l.hr,{}),\"\\n\",n(l.p,{children:\"Okuduğun için teşekkürler. Yakında daha fazlası.\"})]})}return{default:function(e={}){const{wrapper:a}=e.components||{};return a?n(a,{...e,children:n(_createMdxContent,{...e})}):_createMdxContent(e)}};",
+    "toc": [
+      {
+        "title": "Neden bir blog daha?",
+        "url": "#neden-bir-blog-daha",
+        "items": []
+      },
+      {
+        "title": "Ne hakkında yazacağım",
+        "url": "#ne-hakkında-yazacağım",
+        "items": []
+      },
+      {
+        "title": "Stack",
+        "url": "#stack",
+        "items": []
+      }
+    ],
+    "locale": "tr",
+    "permalink": "/tr/posts/hello-world"
+  },
+  {
+    "title": "Derleme Sistemimizi Neden Yeniden Yazdım (ve Ne Öğrendim)",
+    "summary": "300 bin satırlık bir monorepo'yu özel yapılmış Makefile + Bash pipeline'ından Turborepo'ya taşımanın derinlemesine incelemesi: trade-off'lar, kararlar ve sürpriz dersler.",
+    "date": "2026-04-18T00:00:00.000Z",
+    "updated": "2026-05-01T00:00:00.000Z",
+    "tags": [
+      "build-systems",
+      "monorepo",
+      "turborepo",
+      "dx"
+    ],
+    "draft": false,
+    "featured": true,
+    "slug": "why-i-rewrote-our-build-system",
+    "content": "const{Fragment:e,jsx:n,jsxs:r}=arguments[0];function _createMdxContent(l){const a={a:\"a\",code:\"code\",h2:\"h2\",h3:\"h3\",li:\"li\",p:\"p\",pre:\"pre\",span:\"span\",strong:\"strong\",table:\"table\",tbody:\"tbody\",td:\"td\",th:\"th\",thead:\"thead\",tr:\"tr\",ul:\"ul\",...l.components},{Callout:i,FileTree:c,Steps:d,Terminal:s}=a;return i||_missingMdxReference(\"Callout\",!0),c||_missingMdxReference(\"FileTree\",!0),d||_missingMdxReference(\"Steps\",!0),s||_missingMdxReference(\"Terminal\",!0),r(e,{children:[n(a.p,{children:\"Derleme sistemimiz altı yaşındaydı. İşe yarıyordu — 300.000 km’de bir 1998 Honda Civic’in “işe yaraması” gibi. A’dan B’ye gidebiliyordunuz, ama her yolculuk varoluşsal bir kaygı taşıyordu.\"}),\"\\n\",n(a.h2,{id:\"eski-sistem\",children:n(a.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#eski-sistem\",children:\"Eski sistem\"})}),\"\\n\",n(a.p,{children:\"Şunlarla başa çıkmak zorundaydık:\"}),\"\\n\",n(c,{children:\".\\n├── Makefile          # 2.400 satır, 0 yorum\\n├── scripts/\\n│   ├── build.sh      # Make'ten çağrılır, Python'u çağırır, Node'u çağırır\\n│   ├── test.sh       # 14 ortam değişkeni, 3 belgesiz\\n│   └── deploy.sh     # Herkes bu dosyadan korkuyor\\n└── ci/\\n  └── pipeline.yml  # Sıcak cache'de 8 dk, soğuk cache'de 23 dk\"}),\"\\n\",n(i,{type:\"warn\",children:r(a.p,{children:[\"Herhangi bir derleme sistemini prodüksiyonda taşımadan önce, en az \",n(a.strong,{children:\"bir haftalık\"}),\" temel metriklerinizin olduğundan emin olun: derleme süreleri, cache isabet oranları, hata oranları. Temel olmadan iyileşmeyi kanıtlayamazsınız.\"]})}),\"\\n\",n(a.h2,{id:\"neden-turborepo\",children:n(a.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#neden-turborepo\",children:\"Neden Turborepo\"})}),\"\\n\",n(a.p,{children:\"Üç seçeneği değerlendirdim:\"}),\"\\n\",r(a.table,{children:[n(a.thead,{children:r(a.tr,{children:[n(a.th,{children:\"Araç\"}),n(a.th,{children:\"Uzak cache\"}),n(a.th,{children:\"Artımlı\"}),n(a.th,{children:\"Öğrenme eğrisi\"})]})}),r(a.tbody,{children:[r(a.tr,{children:[n(a.td,{children:\"Turborepo\"}),n(a.td,{children:\"✅ native\"}),n(a.td,{children:\"✅ görev düzeyi\"}),n(a.td,{children:\"Düşük\"})]}),r(a.tr,{children:[n(a.td,{children:\"Nx\"}),n(a.td,{children:\"✅\"}),n(a.td,{children:\"✅ proje düzeyi\"}),n(a.td,{children:\"Orta\"})]}),r(a.tr,{children:[n(a.td,{children:\"Bazel\"}),n(a.td,{children:\"✅\"}),n(a.td,{children:\"✅ dosya düzeyi\"}),n(a.td,{children:\"Çok yüksek\"})]})]})]}),\"\\n\",n(a.p,{children:\"İlk günden verimli olması gereken 12 kişilik bir ekip için Turborepo açık farkla en iyi seçimdi.\"}),\"\\n\",n(a.h2,{id:\"geçiş\",children:n(a.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#geçiş\",children:\"Geçiş\"})}),\"\\n\",r(d,{children:[n(a.h3,{id:\"görev-grafiğini-denetleyin\",children:n(a.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#görev-grafiğini-denetleyin\",children:\"Görev grafiğini denetleyin\"})}),n(a.p,{children:\"Tek bir satır config yazmadan önce, derleme grafiğinizi elle çizin. Ben beyaz tahta ve renkli kalemler kullandım.\"}),n(a.h3,{id:\"workspacei-kurun\",children:n(a.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#workspacei-kurun\",children:\"Workspace’i kurun\"})}),n(e,{children:n(a.pre,{className:\"shiki tokyo-night\",style:{backgroundColor:\"#1a1b26\",color:\"#a9b1d6\"},tabIndex:\"0\",\"data-metastring\":'title=\"turbo.json\"',children:r(a.code,{children:[n(a.span,{className:\"line\",children:n(a.span,{style:{color:\"#9ABDF5\"},children:\"{\"})}),\"\\n\",r(a.span,{className:\"line\",children:[n(a.span,{style:{color:\"#89DDFF\"},children:'  \"'}),n(a.span,{style:{color:\"#7AA2F7\"},children:\"$schema\"}),n(a.span,{style:{color:\"#89DDFF\"},children:'\"'}),n(a.span,{style:{color:\"#89DDFF\"},children:\":\"}),n(a.span,{style:{color:\"#89DDFF\"},children:' \"'}),n(a.span,{style:{color:\"#9ECE6A\"},children:\"https://turbo.build/schema.json\"}),n(a.span,{style:{color:\"#89DDFF\"},children:'\"'}),n(a.span,{style:{color:\"#89DDFF\"},children:\",\"})]}),\"\\n\",r(a.span,{className:\"line\",children:[n(a.span,{style:{color:\"#89DDFF\"},children:'  \"'}),n(a.span,{style:{color:\"#7AA2F7\"},children:\"tasks\"}),n(a.span,{style:{color:\"#89DDFF\"},children:'\"'}),n(a.span,{style:{color:\"#89DDFF\"},children:\":\"}),n(a.span,{style:{color:\"#9ABDF5\"},children:\" {\"})]}),\"\\n\",r(a.span,{className:\"line\",children:[n(a.span,{style:{color:\"#89DDFF\"},children:'    \"'}),n(a.span,{style:{color:\"#0DB9D7\"},children:\"build\"}),n(a.span,{style:{color:\"#89DDFF\"},children:'\"'}),n(a.span,{style:{color:\"#89DDFF\"},children:\":\"}),n(a.span,{style:{color:\"#9ABDF5\"},children:\" {\"})]}),\"\\n\",r(a.span,{className:\"line\",children:[n(a.span,{style:{color:\"#89DDFF\"},children:'      \"'}),n(a.span,{style:{color:\"#7DCFFF\"},children:\"dependsOn\"}),n(a.span,{style:{color:\"#89DDFF\"},children:'\"'}),n(a.span,{style:{color:\"#89DDFF\"},children:\":\"}),n(a.span,{style:{color:\"#9ABDF5\"},children:\" [\"}),n(a.span,{style:{color:\"#89DDFF\"},children:'\"'}),n(a.span,{style:{color:\"#9ECE6A\"},children:\"^build\"}),n(a.span,{style:{color:\"#89DDFF\"},children:'\"'}),n(a.span,{style:{color:\"#9ABDF5\"},children:\"]\"}),n(a.span,{style:{color:\"#89DDFF\"},children:\",\"})]}),\"\\n\",r(a.span,{className:\"line\",children:[n(a.span,{style:{color:\"#89DDFF\"},children:'      \"'}),n(a.span,{style:{color:\"#7DCFFF\"},children:\"outputs\"}),n(a.span,{style:{color:\"#89DDFF\"},children:'\"'}),n(a.span,{style:{color:\"#89DDFF\"},children:\":\"}),n(a.span,{style:{color:\"#9ABDF5\"},children:\" [\"}),n(a.span,{style:{color:\"#89DDFF\"},children:'\"'}),n(a.span,{style:{color:\"#9ECE6A\"},children:\"dist/**\"}),n(a.span,{style:{color:\"#89DDFF\"},children:'\"'}),n(a.span,{style:{color:\"#89DDFF\"},children:\",\"}),n(a.span,{style:{color:\"#89DDFF\"},children:' \"'}),n(a.span,{style:{color:\"#9ECE6A\"},children:\".next/**\"}),n(a.span,{style:{color:\"#89DDFF\"},children:'\"'}),n(a.span,{style:{color:\"#9ABDF5\"},children:\"]\"})]}),\"\\n\",n(a.span,{className:\"line\",children:n(a.span,{style:{color:\"#9ABDF5\"},children:\"    }\"})}),\"\\n\",n(a.span,{className:\"line\",children:n(a.span,{style:{color:\"#9ABDF5\"},children:\"  }\"})}),\"\\n\",n(a.span,{className:\"line\",children:n(a.span,{style:{color:\"#9ABDF5\"},children:\"}\"})})]})})}),n(a.h3,{id:\"betikleri-aşamalı-olarak-taşıyın\",children:n(a.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#betikleri-aşamalı-olarak-taşıyın\",children:\"Betikleri aşamalı olarak taşıyın\"})}),n(a.p,{children:\"Asla toplu geçiş yapmayın. Her eski betiği teker teker bir Turbo görevine sarın, davranışın eşleştiğini doğrulayın, merge edin.\"}),n(a.h3,{id:\"uzak-cachei-etkinleştirin\",children:n(a.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#uzak-cachei-etkinleştirin\",children:\"Uzak cache’i etkinleştirin\"})}),n(a.p,{children:\"Gerçek kazanımlar burada ortaya çıkıyor. CI süremiz cache isabet oranında 23 dakikadan 4 dakikaya indi.\"})]}),\"\\n\",n(a.h2,{id:\"sonuçlar\",children:n(a.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#sonuçlar\",children:\"Sonuçlar\"})}),\"\\n\",n(s,{children:'$ turbo build --filter=\"[HEAD^1]\"\\n• Kapsam dahilindeki paketler: 3\\n• 3 pakette build çalıştırılıyor\\n• Uzak cache isabet: 47 görev\\n• Yerel hesaplama: 3 görev\\n✓ 41 saniyede tamamlandı'}),\"\\n\",n(a.p,{children:\"Rakamlar:\"}),\"\\n\",r(a.ul,{children:[\"\\n\",r(a.li,{children:[n(a.strong,{children:\"Ortalama CI süresi:\"}),\" 23 dk → 4 dk (%83 azalma)\"]}),\"\\n\",r(a.li,{children:[n(a.strong,{children:\"Cache isabet oranı (3. ay):\"}),\" %84\"]}),\"\\n\"]}),\"\\n\",n(a.h2,{id:\"beni-şaşırtan-şey\",children:n(a.a,{className:\"anchor\",\"aria-label\":\"Link to section\",href:\"#beni-şaşırtan-şey\",children:\"Beni şaşırtan şey\"})}),\"\\n\",r(a.p,{children:[\"En büyük sürpriz zaman tasarrufu değildi. Ekip üzerindeki \",n(a.strong,{children:\"psikolojik etki\"}),\" oldu. Derlemeler hızlı olduğunda mühendisler onları daha sık çalıştırır. Mühendisler daha sık çalıştırdığında hataları daha erken yakalar. Geri bildirim döngüsü bileşik çalışır.\"]}),\"\\n\",n(a.p,{children:\"Hızlı derlemeler sadece bir araç yatırımı değil, bir kültür yatırımıdır.\"})]})}return{default:function(e={}){const{wrapper:r}=e.components||{};return r?n(r,{...e,children:n(_createMdxContent,{...e})}):_createMdxContent(e)}};function _missingMdxReference(e,n){throw new Error(\"Expected \"+(n?\"component\":\"object\")+\" `\"+e+\"` to be defined: you likely forgot to import, pass, or provide it.\")}",
+    "toc": [
+      {
+        "title": "Eski sistem",
+        "url": "#eski-sistem",
+        "items": []
+      },
+      {
+        "title": "Neden Turborepo",
+        "url": "#neden-turborepo",
+        "items": []
+      },
+      {
+        "title": "Geçiş",
+        "url": "#geçiş",
+        "items": [
+          {
+            "title": "Görev grafiğini denetleyin",
+            "url": "#görev-grafiğini-denetleyin",
+            "items": []
+          },
+          {
+            "title": "Workspace'i kurun",
+            "url": "#workspacei-kurun",
+            "items": []
+          },
+          {
+            "title": "Betikleri aşamalı olarak taşıyın",
+            "url": "#betikleri-aşamalı-olarak-taşıyın",
+            "items": []
+          },
+          {
+            "title": "Uzak cache'i etkinleştirin",
+            "url": "#uzak-cachei-etkinleştirin",
+            "items": []
+          }
+        ]
+      },
+      {
+        "title": "Sonuçlar",
+        "url": "#sonuçlar",
+        "items": []
+      },
+      {
+        "title": "Beni şaşırtan şey",
+        "url": "#beni-şaşırtan-şey",
+        "items": []
+      }
+    ],
+    "locale": "tr",
+    "permalink": "/tr/posts/why-i-rewrote-our-build-system"
   }
 ]

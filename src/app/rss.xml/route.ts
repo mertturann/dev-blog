@@ -1,10 +1,10 @@
-import { getAllPosts } from "@/lib/posts";
+import { getPostsByLocale } from "@/lib/posts";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/seo";
 
 export const dynamic = "force-static";
 
 export function GET() {
-	const posts = getAllPosts();
+	const posts = getPostsByLocale("en");
 
 	const items = posts
 		.map(

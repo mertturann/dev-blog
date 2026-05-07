@@ -11,7 +11,7 @@ import {
 	Sun,
 	User,
 } from "lucide-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/lib/theme";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -134,7 +134,7 @@ export function CommandPalette({ posts, tags }: CommandPaletteProps) {
 			{/* Overlay */}
 			{open && (
 				<div
-					className="fixed inset-0 z-[200] flex items-start justify-center pt-24 px-4"
+					className="fixed inset-0 z-200 flex items-start justify-center pt-24 px-4"
 					style={{ background: "rgba(5,6,10,0.7)", backdropFilter: "blur(4px)" }}
 					onClick={(e) => e.target === e.currentTarget && setOpen(false)}
 				>

@@ -91,11 +91,19 @@ const posts = defineCollection({
 			content: s.mdx(),
 			toc: s.toc(),
 		})
-		.transform((data) => ({
-			...data,
-			slug: data.slug.replace(/^posts\//, ""),
-			permalink: `/posts/${data.slug.replace(/^posts\//, "")}`,
-		})),
+		.transform((data) => {
+			// slug from velite is e.g. "posts/en/hello-world"
+			const withoutPrefix = data.slug.replace(/^posts\//, ""); // "en/hello-world"
+			const slashIdx = withoutPrefix.indexOf("/");
+			const locale = slashIdx !== -1 ? withoutPrefix.slice(0, slashIdx) : "en";
+			const slug = slashIdx !== -1 ? withoutPrefix.slice(slashIdx + 1) : withoutPrefix;
+			return {
+				...data,
+				locale,
+				slug,
+				permalink: `/${locale}/posts/${slug}`,
+			};
+		}),
 });
 
 const pages = defineCollection({

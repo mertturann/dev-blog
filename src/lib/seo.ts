@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
 import type { Post } from "./posts";
+import type { Locale } from "./i18n";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://abort.run";
 const SITE_NAME = "abort.run";
 const SITE_DESCRIPTION =
-	"A Senior Software Engineer writing about distributed systems, frontend engineering, and developer tools.";
-const TWITTER_HANDLE = "@mertturann";
+	"Backend developer writing about systems, tools, and software engineering.";
+const TWITTER_HANDLE = "@merttturan0706";
+
+const OG_LOCALE: Record<Locale, string> = {
+	en: "en_US",
+	tr: "tr_TR",
+};
 
 export const defaultMetadata: Metadata = {
 	metadataBase: new URL(SITE_URL),
@@ -24,13 +30,35 @@ export const defaultMetadata: Metadata = {
 		card: "summary_large_image",
 		creator: TWITTER_HANDLE,
 	},
-	robots: {
-		index: true,
-		follow: true,
-	},
+	robots: { index: true, follow: true },
 };
 
-export function buildPostMetadata(post: Post): Metadata {
+export function buildLocaleMetadata(locale: Locale, overrides: Partial<Metadata> = {}): Metadata {
+	return {
+		...defaultMetadata,
+		openGraph: {
+			...(defaultMetadata.openGraph as object),
+			locale: OG_LOCALE[locale],
+		},
+		alternates: {
+			languages: {
+				en: `${SITE_URL}/en`,
+				tr: `${SITE_URL}/tr`,
+			},
+		},
+		...overrides,
+	};
+}
+
+export function buildPostMetadata(post: Post, alternatePermalink?: string | null): Metadata {
+	const languages: Record<string, string> = {
+		[post.locale]: `${SITE_URL}${post.permalink}`,
+	};
+	if (alternatePermalink) {
+		const otherLocale = post.locale === "en" ? "tr" : "en";
+		languages[otherLocale] = `${SITE_URL}${alternatePermalink}`;
+	}
+
 	return {
 		title: post.title,
 		description: post.summary,
@@ -41,6 +69,7 @@ export function buildPostMetadata(post: Post): Metadata {
 			publishedTime: post.date,
 			modifiedTime: post.updated,
 			tags: post.tags,
+			locale: OG_LOCALE[post.locale as Locale] ?? "en_US",
 		},
 		twitter: {
 			card: "summary_large_image",
@@ -49,6 +78,7 @@ export function buildPostMetadata(post: Post): Metadata {
 		},
 		alternates: {
 			canonical: `${SITE_URL}${post.permalink}`,
+			languages,
 		},
 	};
 }

@@ -72,7 +72,7 @@ export function PostCard({ post }: { post: Post }) {
 						<time dateTime={post.date}>{formatDate(post.date)}</time>
 						<span className="flex items-center gap-1">
 							<Clock size={10} />
-							{mins} dk
+							{mins} min read
 						</span>
 					</div>
 				</div>
