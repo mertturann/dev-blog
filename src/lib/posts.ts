@@ -15,6 +15,7 @@ export interface Post {
 	tags: string[];
 	draft: boolean;
 	featured: boolean;
+	translationKey?: string;
 	locale: string;
 	slug: string;
 	permalink: string;
@@ -96,10 +97,32 @@ export function getPostsByTagAndLocale(tag: string, locale: string): Post[] {
 	return getPostsByLocale(locale).filter((p) => p.tags.includes(tag));
 }
 
-/** Returns slugs that have a version in both locales */
+/** Returns the permalink of the same post in the other locale, matching by slug or translationKey. */
 export function getAlternateLocale(slug: string, currentLocale: string): string | null {
-	const other = _all.find((p) => p.slug === slug && p.locale !== currentLocale);
-	return other?.permalink ?? null;
+	// 1. Same slug in the other locale (common case)
+	const bySameSlug = _all.find((p) => p.slug === slug && p.locale !== currentLocale);
+	if (bySameSlug) return bySameSlug.permalink;
+
+	// 2. Different slug — match by translationKey
+	const current = _all.find((p) => p.slug === slug && p.locale === currentLocale);
+	if (current?.translationKey) {
+		const byKey = _all.find(
+			(p) => p.translationKey === current.translationKey && p.locale !== currentLocale
+		);
+		if (byKey) return byKey.permalink;
+	}
+
+	return null;
+}
+
+/** Pre-built map of { slug → alternatePermalink } for a given locale. Passed to LanguageSwitcher. */
+export function buildAlternateMap(locale: string): Record<string, string> {
+	const map: Record<string, string> = {};
+	for (const post of _all.filter((p) => p.locale === locale)) {
+		const alt = getAlternateLocale(post.slug, locale);
+		if (alt) map[post.slug] = alt;
+	}
+	return map;
 }
 
 export function getPageBySlug(slug: string): Page | undefined {

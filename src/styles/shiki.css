@@ -1,88 +1,56 @@
 /* ============================================================
-   IDE-style code block chrome
-   Shiki renders: <div class="shiki-wrapper"><div class="shiki-header"><pre class="shiki">
+   rehype-pretty-code — Geist-inspired code block
    ============================================================ */
 
-.shiki-wrapper {
+/* ── Wrapper figure ── */
+.rpc-figure {
+  position: relative;
   margin: 1.75em 0;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
   overflow: hidden;
   font-size: 0.875rem;
+  background: #0e0e0e;
 }
 
-/* --- Window header bar --- */
-.shiki-header {
+/* ── Title / filename bar ── */
+figcaption[data-rehype-pretty-code-title] {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.875rem;
-  background: var(--bg-surface-2);
-  border-bottom: 1px solid var(--border-subtle);
-  min-height: 2.25rem;
-}
-
-/* Traffic-light dots */
-.shiki-dots {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  flex-shrink: 0;
-}
-.shiki-dots .dot {
-  display: block;
-  width: 0.65rem;
-  height: 0.65rem;
-  border-radius: 9999px;
-}
-.dot-red    { background: #ff5f57; }
-.dot-yellow { background: #febc2e; }
-.dot-green  { background: #28c840; }
-
-/* Filename tab */
-.shiki-filename {
-  flex: 1;
+  padding: 0 1rem;
+  height: 2.5rem;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--fg-secondary);
-  padding: 0.15em 0.5em;
-  background: var(--bg-surface-1);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 20rem;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.35);
+  background: #111;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
-.shiki-filename:empty { display: none; }
 
-/* Language badge */
-.shiki-lang {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--accent-primary);
-  background: rgb(124 92 255 / 0.12);
-  border: 1px solid rgb(124 92 255 / 0.25);
-  padding: 0.1em 0.45em;
-  border-radius: var(--radius-sm);
-  flex-shrink: 0;
+/* ── Copy button overlay ── */
+.rpc-actions {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 10;
 }
-.shiki-lang:empty { display: none; }
 
-/* --- Shiki <pre> output --- */
-.shiki-wrapper pre {
+/* When there's a title bar, push copy button down */
+.rpc-figure:has(figcaption[data-rehype-pretty-code-title]) .rpc-actions {
+  top: 0.375rem;
+}
+
+/* ── Pre / code ── */
+.rpc-figure pre {
   margin: 0;
   padding: 1.125rem 1rem;
+  padding-right: 4rem; /* make room for copy button */
   overflow-x: auto;
-  background: var(--bg-surface-0) !important; /* override Shiki inline bg */
   -webkit-overflow-scrolling: touch;
+  background: #0e0e0e !important;
 }
 
-/* Keep Shiki's inline token colours but strip its background */
-.shiki-wrapper pre > code {
+.rpc-figure pre > code {
+  display: block;
   background: transparent !important;
   border: none !important;
   padding: 0 !important;
@@ -91,38 +59,45 @@
   line-height: 1.7;
   white-space: pre;
   tab-size: 2;
+  counter-reset: line;
 }
 
-/* Line highlight transformer support */
-.shiki-wrapper .line.highlighted {
-  background: rgb(124 92 255 / 0.08);
+/* Each line */
+.rpc-figure code [data-line] {
+  display: block;
+  min-height: 1lh;
+}
+
+/* ── Highlighted lines ── */
+.rpc-figure code [data-highlighted-line] {
+  background: rgba(124, 92, 255, 0.08);
   border-left: 2px solid var(--accent-primary);
   margin: 0 -1rem;
   padding: 0 1rem;
-  display: block;
 }
 
-/* Diff lines */
-.shiki-wrapper .line.diff.add {
-  background: rgb(52 211 153 / 0.08);
+/* ── Diff — transformerNotationDiff [!code ++] / [!code --] ── */
+.rpc-figure code .diff.add {
+  display: block;
+  background: rgba(52, 211, 153, 0.10);
   border-left: 2px solid var(--accent-emerald);
   margin: 0 -1rem;
   padding: 0 1rem;
-  display: block;
 }
-.shiki-wrapper .line.diff.remove {
-  background: rgb(244 63 94 / 0.08);
+
+.rpc-figure code .diff.remove {
+  display: block;
+  background: rgba(244, 63, 94, 0.10);
   border-left: 2px solid var(--accent-rose);
   margin: 0 -1rem;
   padding: 0 1rem;
-  display: block;
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
-/* Horizontal scrollbar */
-.shiki-wrapper pre::-webkit-scrollbar { height: 4px; }
-.shiki-wrapper pre::-webkit-scrollbar-track { background: var(--bg-surface-1); }
-.shiki-wrapper pre::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
-  border-radius: var(--radius-full);
+/* ── Scrollbar ── */
+.rpc-figure pre::-webkit-scrollbar { height: 3px; }
+.rpc-figure pre::-webkit-scrollbar-track { background: transparent; }
+.rpc-figure pre::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
 }

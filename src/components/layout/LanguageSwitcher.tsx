@@ -3,11 +3,23 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export function LanguageSwitcher({ lang }: { lang: string }) {
+interface LanguageSwitcherProps {
+	lang: string;
+	alternateMap: Record<string, string>;
+}
+
+export function LanguageSwitcher({ lang, alternateMap }: LanguageSwitcherProps) {
 	const pathname = usePathname();
 	const otherLang = lang === "en" ? "tr" : "en";
-	// Replace the leading /en or /tr segment
-	const otherPath = pathname.replace(/^\/[a-z]{2}(\/|$)/, `/${otherLang}$1`);
+
+	// Extract slug if we're on a post page: /[lang]/posts/[slug]
+	const postMatch = pathname.match(/^\/[a-z]{2}\/posts\/([^/]+)/);
+	const postSlug = postMatch?.[1];
+
+	// Use pre-built alternate map for posts; fall back to simple locale swap for other pages
+	const otherPath = postSlug
+		? (alternateMap[postSlug] ?? `/${otherLang}/posts`)
+		: pathname.replace(/^\/[a-z]{2}(\/|$)/, `/${otherLang}$1`);
 
 	return (
 		<Link

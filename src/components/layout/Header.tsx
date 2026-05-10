@@ -16,9 +16,10 @@ interface HeaderProps {
 	tags: string[];
 	lang: string;
 	t: NavDict;
+	alternateMap: Record<string, string>;
 }
 
-export function Header({ posts, tags, lang, t }: HeaderProps) {
+export function Header({ posts, tags, lang, t, alternateMap }: HeaderProps) {
 	const [scrolled, setScrolled] = useState(false);
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const pathname = usePathname();
@@ -107,14 +108,14 @@ export function Header({ posts, tags, lang, t }: HeaderProps) {
 					})}
 
 					<div className="ml-1 flex items-center gap-1">
-						<LanguageSwitcher lang={lang} />
+						<LanguageSwitcher lang={lang} alternateMap={alternateMap} />
 						<ThemeToggle />
 					</div>
 				</nav>
 
 				{/* Mobile */}
 				<div className="sm:hidden flex items-center gap-2">
-					<LanguageSwitcher lang={lang} />
+					<LanguageSwitcher lang={lang} alternateMap={alternateMap} />
 					<ThemeToggle />
 					<button
 						onClick={() => setMobileOpen((o) => !o)}

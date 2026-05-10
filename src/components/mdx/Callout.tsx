@@ -52,7 +52,7 @@ interface CalloutProps {
 }
 
 export function Callout({ type = "default", title, children }: CalloutProps) {
-	const { icon: Icon, bg, border, text } = CONFIG[type];
+	const { icon: Icon, bg, border, text } = CONFIG[type] ?? CONFIG.default;
 
 	return (
 		<div

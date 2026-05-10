@@ -6,8 +6,8 @@
   font-size: var(--text-base);
   line-height: 1.8;
   max-width: var(--prose-width);
-  width: 100%;         /* fill the article column */
-  overflow-x: hidden;  /* catch any remaining child overflow */
+  width: 100%;
+  min-width: 0;
 }
 
 /* --- Headings --- */

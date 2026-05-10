@@ -1,78 +1,14 @@
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import rehypeShiki from "@shikijs/rehype";
+import rehypePrettyCode from "rehype-pretty-code";
+import type { Options as PrettyCodeOptions } from "rehype-pretty-code";
+import {
+	transformerNotationDiff,
+	transformerNotationHighlight,
+} from "@shikijs/transformers";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import remarkSmartypants from "remark-smartypants";
-import type { Element, Root } from "hast";
-import { visit } from "unist-util-visit";
 import { defineCollection, defineConfig, s } from "velite";
-
-// Wraps each <pre class="shiki"> in an IDE-style chrome:
-// window dots + filename tab + language badge
-function rehypeIDEChrome() {
-	return (tree: Root) => {
-		visit(tree, "element", (node: Element, index, parent) => {
-			if (
-				node.tagName !== "pre" ||
-				!parent ||
-				index === undefined
-			) return;
-
-			const classes = (node.properties?.className as string[]) ?? [];
-			if (!classes.includes("shiki")) return;
-
-			const meta = (node.properties?.["dataMetastring"] as string) ?? "";
-
-			const titleMatch = meta.match(/title="([^"]+)"/);
-			const filename = titleMatch?.[1] ?? null;
-
-			const lang = classes
-				.find((c) => c.startsWith("language-"))
-				?.replace("language-", "") ?? null;
-
-			const dots: Element = {
-				type: "element",
-				tagName: "div",
-				properties: { className: ["shiki-dots"] },
-				children: [
-					{ type: "element", tagName: "span", properties: { className: ["dot", "dot-red"] }, children: [] },
-					{ type: "element", tagName: "span", properties: { className: ["dot", "dot-yellow"] }, children: [] },
-					{ type: "element", tagName: "span", properties: { className: ["dot", "dot-green"] }, children: [] },
-				],
-			};
-
-			const filenameEl: Element = {
-				type: "element",
-				tagName: "span",
-				properties: { className: ["shiki-filename"] },
-				children: filename ? [{ type: "text", value: filename }] : [],
-			};
-
-			const langEl: Element = {
-				type: "element",
-				tagName: "span",
-				properties: { className: ["shiki-lang"] },
-				children: lang ? [{ type: "text", value: lang }] : [],
-			};
-
-			const header: Element = {
-				type: "element",
-				tagName: "div",
-				properties: { className: ["shiki-header"] },
-				children: [dots, filenameEl, langEl],
-			};
-
-			const wrapper: Element = {
-				type: "element",
-				tagName: "div",
-				properties: { className: ["shiki-wrapper", "not-prose"] },
-				children: [header, { ...node }],
-			};
-
-			parent.children[index] = wrapper;
-		});
-	};
-}
 
 const posts = defineCollection({
 	name: "Post",
@@ -87,13 +23,13 @@ const posts = defineCollection({
 			cover: s.image().optional(),
 			draft: s.boolean().default(false),
 			featured: s.boolean().default(false),
+			translationKey: s.string().optional(),
 			slug: s.path(),
 			content: s.mdx(),
 			toc: s.toc(),
 		})
 		.transform((data) => {
-			// slug from velite is e.g. "posts/en/hello-world"
-			const withoutPrefix = data.slug.replace(/^posts\//, ""); // "en/hello-world"
+			const withoutPrefix = data.slug.replace(/^posts\//, "");
 			const slashIdx = withoutPrefix.indexOf("/");
 			const locale = slashIdx !== -1 ? withoutPrefix.slice(0, slashIdx) : "en";
 			const slug = slashIdx !== -1 ? withoutPrefix.slice(slashIdx + 1) : withoutPrefix;
@@ -137,17 +73,17 @@ export default defineConfig({
 				},
 			],
 			[
-				rehypeShiki,
+				rehypePrettyCode,
 				{
 					theme: "tokyo-night",
-					// Keep the metastring as a data attribute so our plugin can read it
-					parseMetaString(meta: string) {
-						return { dataMetastring: meta };
-					},
-				},
+					keepBackground: false,
+					defaultLang: "plaintext",
+					transformers: [
+						transformerNotationDiff(),
+						transformerNotationHighlight(),
+					],
+				} satisfies PrettyCodeOptions,
 			],
-			// Must run AFTER rehypeShiki so <pre class="shiki"> already exists
-			rehypeIDEChrome,
 		],
 		remarkPlugins: [remarkGfm, remarkSmartypants],
 	},

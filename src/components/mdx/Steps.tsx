@@ -1,50 +1,50 @@
-import type { ReactNode } from "react";
+import React, { type ReactNode } from "react";
 
 export function Steps({ children }: { children: ReactNode }) {
+	const steps = React.Children.toArray(children);
 	return (
-		<div
-			className="not-prose my-6 space-y-0"
-			style={
-				{
-					"--step-color": "var(--accent-primary)",
-					counterReset: "step",
-				} as React.CSSProperties
-			}
-		>
-			{children}
+		<div className="not-prose my-6">
+			{steps.map((step, i) =>
+				React.isValidElement(step)
+					? React.cloneElement(step as React.ReactElement<{ number: number }>, { number: i + 1 })
+					: step
+			)}
 		</div>
 	);
 }
 
-export function Step({ children }: { children: ReactNode }) {
+interface StepProps {
+	number?: number;
+	children: ReactNode;
+}
+
+export function Step({ number, children }: StepProps) {
+	const isLast = false; // connector always shown; last step handled via CSS
 	return (
-		<div
-			className="relative pl-12 pb-8"
-			style={
-				{
-					counterIncrement: "step",
-				} as React.CSSProperties
-			}
-		>
-			{/* Number bubble */}
-			<div
-				className="absolute left-0 top-0 w-8 h-8 rounded-full flex items-center justify-center text-xs font-mono font-bold"
-				style={{
-					background: "rgb(124 92 255 / 0.15)",
-					border: "1px solid var(--accent-primary)",
-					color: "var(--accent-primary)",
-				}}
-				aria-hidden
-			>
-				<span>{/* uses CSS counter */}</span>
+		<div className="relative flex gap-4 pb-8 last:pb-0">
+			{/* Left column: bubble + connector */}
+			<div className="flex flex-col items-center">
+				<div
+					className="flex items-center justify-center w-8 h-8 rounded-full text-xs font-mono font-bold shrink-0 z-10"
+					style={{
+						background: "rgb(124 92 255 / 0.15)",
+						border: "1px solid var(--accent-primary)",
+						color: "var(--accent-primary)",
+					}}
+				>
+					{number}
+				</div>
+				<div
+					className="w-px flex-1 mt-1 last:hidden"
+					style={{ background: "var(--border-subtle)", minHeight: "1rem" }}
+				/>
 			</div>
-			{/* Vertical connector */}
+
+			{/* Right column: content */}
 			<div
-				className="absolute left-4 top-8 bottom-0 w-px"
-				style={{ background: "var(--border-subtle)" }}
-				aria-hidden
-			/>
-			<div className="prose" style={{ paddingTop: "0.15rem" }}>
+				className="prose pb-1 min-w-0"
+				style={{ paddingTop: "0.25rem" }}
+			>
 				{children}
 			</div>
 		</div>
