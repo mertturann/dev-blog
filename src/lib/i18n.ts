@@ -102,28 +102,28 @@ export const dict = {
 			statusPill: "durum: çevrimiçi",
 			title: "whoami",
 			subtitle:
-				"Backend geliştirici. Dayanıklı sistemler kuruyorum, içlerine takıntılıyım ve arada sırada dokunulmaması gereken şeylere dokunuyorum.",
+				"Backend geliştiriciyim. Sağlam sistemler kurmaya çalışıyorum, bir şeyin arka planda nasıl çalıştığını öğrenmeden rahat edemiyorum. Arada bir de kurcalanmaması gereken yerleri kurcalıyorum.",
 			stackLabel: "Stack",
 			stackTrace: "Stack Trace",
-			securityLabel: "Güvenlik İzni",
+			securityLabel: "Güvenlik",
 			psLabel: "$ ps aux | grep mert",
 			contactLabel: "İletişim",
 			disclaimer:
-				"Güvenlik bilgisi kesinlikle savunma amaçlıdır. İzinsiz sistemlere girmiyorum — girseydim de logları temizlerdim.",
+				"Bildiklerimi sadece savunma için kullanıyorum. İzinsiz hiçbir sisteme girmiyorum, girsem de zaten arkamda log bırakmazdım.",
 			securityText:
-				"Güvenlik tarafında, ikisi arasında sıkışıp kalmak yerine hem teoriyi hem pratiği bilmeyi hedefliyorum. CTF zorlukları, sızma testi metodolojileri ve \"bu yamayı bekliyor\" diyen bir PR açmak rutinin bir parçası.",
+				"Güvenlikte işi teoride bırakmıyorum, okuduğumu pratikte de deniyorum. CTF çözüyorum, pentest tekniklerine kafa yoruyorum. Bir açık görünce de \"bunu kapatalım\" deyip PR açıyorum.",
 			contactText:
-				"Bir proje fikrin, teknik bir sorun mu var ya da sadece merhaba demek mi istiyorsun — footer'daki bağlantıları kullan. PR'lar da memnuniyetle karşılanır.",
+				"Aklında bir proje fikri varsa, teknik bir konuda takıldıysan ya da sadece selam vermek istiyorsan sayfanın altındaki bağlantılardan bana ulaşabilirsin. PR'lara da her zaman açığım.",
 		},
 		contact: {
-			statusPill: "bağlantı kabul ediliyor",
+			statusPill: "bağlantılara açık",
 			title: "iletişim",
 			description:
-				"Bir proje fikrin, teknik bir sorun mu var ya da sadece merhaba demek mi istiyorsun — aşağıdan bir kanal seç.",
+				"Bir proje fikrin mi var, teknik bir konuda mı takıldın, yoksa sadece selam mı vermek istiyorsun? Aşağıdaki kanallardan bana ulaşabilirsin.",
 			channels: "Kanallar",
 			netstat: "$ netstat -an | grep LISTEN",
 			privateRepos:
-				"GitHub profilimde yer alan büyük çaplı projelerimin büyük çoğunluğu özel (private) depo olarak tutulmaktadır. Çalışmalarımla ilgileniyorsan doğrudan iletişime geçebilirsin.",
+				"Büyük projelerimin çoğu GitHub'da private repo olarak duruyor. Çalışmalarımı merak ediyorsan bana doğrudan yazabilirsin.",
 			contactDescriptions: {
 				github: "Kaynak kod & projeler",
 				instagram: "Günlük paylaşımlar",

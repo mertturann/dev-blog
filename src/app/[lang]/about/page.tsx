@@ -192,9 +192,9 @@ export default async function AboutPage({ params }: Props) {
 				<div className="space-y-4 text-sm leading-relaxed max-w-2xl" style={{ color: "var(--fg-secondary)" }}>
 					{lang === "tr" ? (
 						<>
-							<p>Gündüz <Em>ASP.NET Core</Em> API&apos;leri yazıyor, geceleri bunları nasıl sertleştireceğimi düşünüyorum — siber güvenlik yan ilgim oldukça işe yarıyor.</p>
-							<p><Em>PHP</Em>&apos;yi de akıcı konuşurum, yani eski kod tabanlarını okurken donup kalmam. Bu bir beceri sayılır.</p>
-							<p><Em>Linux</Em> benim doğal ortamım — GUI gerektirmez, terminal benim IDE&apos;im ve vim terapim. <Em>Docker</Em> &ldquo;bende çalışıyor&rdquo; dönemini kapattı. <Em>Git</Em>, her şeyin kayıt altında olduğunun sessiz güvenciyle commit yapma sanatıdır.</p>
+							<p>Gündüzleri <Em>ASP.NET Core</Em> ile API yazıyorum, geceleri de bu API&apos;leri nasıl daha güvenli hale getirebileceğimi düşünüyorum. Yani siber güvenlik merakım boşa gitmiyor.</p>
+							<p><Em>PHP</Em>&apos;ye de hakimim, yani yıllar önce yazılmış bir projenin kodunu açınca panik yapmıyorum. Bence bu da başlı başına bir yetenek.</p>
+							<p><Em>Linux</Em>&apos;ta kendimi evimde hissediyorum. Arayüze pek ihtiyaç duymuyorum, çoğu işimi terminalden hallediyorum. Vim ise benim için bir nevi terapi. <Em>Docker</Em>&apos;dan sonra &ldquo;ama bende çalışıyordu&rdquo; demek zorunda kalmıyorum. <Em>Git</Em> sayesinde de rahat rahat hata yapabiliyorum, nasılsa her şey kayıt altında.</p>
 						</>
 					) : (
 						<>
@@ -225,7 +225,7 @@ export default async function AboutPage({ params }: Props) {
 				<div className="max-w-2xl">
 					<Terminal>
 						{lang === "tr"
-							? `mert     1337  0.0  0.1  blog-yazma\nmert     4200  2.4  0.8  dokuman-okuma\nmert     6660  0.0  0.0  hayat-sorgulamak\nmert     8080  1.2  0.4  bir-seyler-insa-etme\nmert     9999 99.9 99.9  kahve-icme`
+							? `mert     1337  0.0  0.1  blog-yaziyor\nmert     4200  2.4  0.8  dokuman-okuyor\nmert     6660  0.0  0.0  hayati-sorguluyor\nmert     8080  1.2  0.4  yeni-bir-sey-yapiyor\nmert     9999 99.9 99.9  kahve-iciyor`
 							: `mert     1337  0.0  0.1  writing-blog\nmert     4200  2.4  0.8  reading-docs\nmert     6660  0.0  0.0  questioning-life-choices\nmert     8080  1.2  0.4  building-something-new\nmert     9999 99.9 99.9  drinking-coffee`}
 					</Terminal>
 				</div>

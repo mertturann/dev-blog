@@ -67,9 +67,9 @@ export default async function ContactPage({ params }: Props) {
 						</span>
 					) : (
 						<span>
-							GitHub profilimde yer alan büyük çaplı projelerimin büyük çoğunluğu{" "}
-							<span style={{ color: "var(--accent-amber)" }}>özel (private) depo</span> olarak tutulmaktadır.
-							Çalışmalarımla ilgileniyorsan doğrudan iletişime geçebilirsin.
+							Büyük projelerimin çoğu GitHub&apos;da{" "}
+							<span style={{ color: "var(--accent-amber)" }}>private repo</span> olarak duruyor.
+							Çalışmalarımı merak ediyorsan bana doğrudan yazabilirsin.
 						</span>
 					)}
 				</div>
