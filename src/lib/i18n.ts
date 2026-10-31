@@ -102,24 +102,24 @@ export const dict = {
 			statusPill: "durum: çevrimiçi",
 			title: "whoami",
 			subtitle:
-				"Backend geliştiriciyim. Sağlam sistemler kurmaya çalışıyorum, bir şeyin arka planda nasıl çalıştığını öğrenmeden rahat edemiyorum. Arada bir de kurcalanmaması gereken yerleri kurcalıyorum.",
+				"Backend geliştiriciyim. Çoğunlukla C# ve ASP.NET Core ile çalışıyorum, boş zamanlarımda da siber güvenlikle uğraşıyorum. Burada bu konularda öğrendiklerimi yazıyorum.",
 			stackLabel: "Stack",
 			stackTrace: "Stack Trace",
 			securityLabel: "Güvenlik",
 			psLabel: "$ ps aux | grep mert",
 			contactLabel: "İletişim",
 			disclaimer:
-				"Bildiklerimi sadece savunma için kullanıyorum. İzinsiz hiçbir sisteme girmiyorum, girsem de zaten arkamda log bırakmazdım.",
+				"Güvenlik çalışmalarımı yalnızca izinli ortamlarda ya da kendi hesaplarım üzerinde yapıyorum. Bulduğum açıkları ilgili kuruma bildiriyorum.",
 			securityText:
-				"Güvenlikte işi teoride bırakmıyorum, okuduğumu pratikte de deniyorum. CTF çözüyorum, pentest tekniklerine kafa yoruyorum. Bir açık görünce de \"bunu kapatalım\" deyip PR açıyorum.",
+				"Siber güvenliğe de ilgim var, boş zamanlarımda CTF çözüyorum. Tüketici Hakem Heyeti sisteminde bulduğum bir IDOR açığını ilgili birime bildirdim ve açık kapatıldı. Süreci bir yazıda anlattım.",
 			contactText:
-				"Aklında bir proje fikri varsa, teknik bir konuda takıldıysan ya da sadece selam vermek istiyorsan sayfanın altındaki bağlantılardan bana ulaşabilirsin. PR'lara da her zaman açığım.",
+				"Bir proje, soru ya da öneri için sayfanın altındaki bağlantılardan bana ulaşabilirsin.",
 		},
 		contact: {
 			statusPill: "bağlantılara açık",
 			title: "iletişim",
 			description:
-				"Bir proje fikrin mi var, teknik bir konuda mı takıldın, yoksa sadece selam mı vermek istiyorsun? Aşağıdaki kanallardan bana ulaşabilirsin.",
+				"Proje, soru ya da öneri için aşağıdaki kanallardan bana ulaşabilirsin.",
 			channels: "Kanallar",
 			netstat: "$ netstat -an | grep LISTEN",
 			privateRepos:

@@ -192,9 +192,8 @@ export default async function AboutPage({ params }: Props) {
 				<div className="space-y-4 text-sm leading-relaxed max-w-2xl" style={{ color: "var(--fg-secondary)" }}>
 					{lang === "tr" ? (
 						<>
-							<p>Gündüzleri <Em>ASP.NET Core</Em> ile API yazıyorum, geceleri de bu API&apos;leri nasıl daha güvenli hale getirebileceğimi düşünüyorum. Yani siber güvenlik merakım boşa gitmiyor.</p>
-							<p><Em>PHP</Em>&apos;ye de hakimim, yani yıllar önce yazılmış bir projenin kodunu açınca panik yapmıyorum. Bence bu da başlı başına bir yetenek.</p>
-							<p><Em>Linux</Em>&apos;ta kendimi evimde hissediyorum. Arayüze pek ihtiyaç duymuyorum, çoğu işimi terminalden hallediyorum. Vim ise benim için bir nevi terapi. <Em>Docker</Em>&apos;dan sonra &ldquo;ama bende çalışıyordu&rdquo; demek zorunda kalmıyorum. <Em>Git</Em> sayesinde de rahat rahat hata yapabiliyorum, nasılsa her şey kayıt altında.</p>
+							<p>Çoğunlukla <Em>ASP.NET Core</Em> ile backend tarafında API geliştiriyorum. <Em>PHP</Em> de biliyorum, eski projelerde hâlâ işime yarıyor.</p>
+							<p>Günlük olarak <Em>Linux</Em> (Debian) kullanıyorum ve çoğu işi terminalden hallediyorum. Projeleri <Em>Docker</Em> ile ayağa kaldırıyorum, kodu da <Em>Git</Em>&apos;te tutuyorum.</p>
 						</>
 					) : (
 						<>
